@@ -1,3 +1,0 @@
-[build]
-  command = "sed -i \"s|{{SUPABASE_URL}}|$SUPABASE_URL|g\" index.html && sed -i \"s|{{SUPABASE_PUBLISHABLE_KEY}}|$SUPABASE_PUBLISHABLE_KEY|g\" index.html"
-  publish = "."
