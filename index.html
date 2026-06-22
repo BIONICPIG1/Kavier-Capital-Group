@@ -2,660 +2,1305 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Kavier Capital Group | Signals & Multi-Market Trading Hub</title>
-  <link rel="icon" type="image/jpeg" href="logo.png <style> border-radius:: 5%</style> ">
-  <!-- Bootstrap 5 + Icons + Fonts -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Fonts -->
-  <link
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Kavier Capital Group | Signals & Multi-Market Trading Hub</title>
+    <link rel="icon" type="image/jpeg" href="logo.png">
+    <!-- Bootstrap 5 + Icons + Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
     href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <!-- Supabase JS library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <!-- Supabase JS library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Inter', 'Space Grotesk', sans-serif;
-      background-color: #0a0c12;
-      color: #f0f3fa;
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-    }
+        body {
+            font-family: 'Inter', 'Space Grotesk', sans-serif;
+            background-color: #05070c;
+            color: #f0f3fa;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
 
-    .glass-card {
-      background: rgba(18, 22, 35, 0.75);
-      backdrop-filter: blur(10px);
-      border-radius: 2rem;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      transition: all 0.3s ease;
-    }
+        /* ── Animated Background ── */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 15% 25%, rgba(0, 245, 255, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(201, 151, 78, 0.06), transparent 35%),
+                radial-gradient(circle at 50% 50%, rgba(0, 114, 255, 0.05), transparent 50%);
+            z-index: -2;
+        }
 
-    .glass-card:hover {
-      border-color: #0ff;
-      box-shadow: 0 0 24px rgba(0, 255, 255, 0.2);
-      transform: translateY(-6px);
-    }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                repeating-linear-gradient(transparent 0px, transparent 3px, rgba(0, 255, 255, 0.015) 3px, rgba(0, 255, 255, 0.015) 6px);
+            pointer-events: none;
+            z-index: -1;
+        }
 
-    .neon-text {
-      text-shadow: 0 0 8px rgba(0, 255, 255, 0.6), 0 0 2px #0ff;
-    }
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1220;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0ff;
+            border-radius: 8px;
+        }
 
-    .gradient-bg {
-      background: radial-gradient(circle at 20% 30%, #12172b, #05070e);
-    }
+        /* ── Glass Card ── */
+        .glass-card {
+            background: rgba(12, 16, 28, 0.72);
+            backdrop-filter: blur(14px);
+            border-radius: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.18);
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .btn-glow {
-      background: linear-gradient(95deg, #00c6ff, #0072ff);
-      border: none;
-      color: white;
-      font-weight: 700;
-      padding: 12px 32px;
-      border-radius: 60px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
-    }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #0ff, #0072ff, #c9974e, #0ff);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.45s;
+            z-index: -1;
+            background-size: 300% 300%;
+        }
 
-    .btn-glow:hover {
-      transform: scale(1.02);
-      background: linear-gradient(95deg, #00a1ff, #0059ff);
-      box-shadow: 0 8px 25px rgba(0, 150, 255, 0.5);
-      color: white;
-    }
+        .glass-card:hover::before {
+            opacity: 0.20;
+        }
 
-    .btn-outline-cyber {
-      border: 1px solid #0ff;
-      background: transparent;
-      color: #0ff;
-      border-radius: 60px;
-      font-weight: 600;
-      transition: 0.2s;
-    }
+        .glass-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 255, 0.55);
+            box-shadow: 0 30px 50px -16px rgba(0, 255, 255, 0.22);
+        }
 
-    .btn-outline-cyber:hover {
-      background: #0ff22d1c;
-      box-shadow: 0 0 12px #0ff;
-      color: #0ff;
-    }
+        /* ── Typography ── */
+        .neon-text {
+            text-shadow: 0 0 12px rgba(0, 255, 255, 0.7), 0 0 4px #0ff;
+        }
 
-    .market-icon {
-      font-size: 2.6rem;
-      background: linear-gradient(145deg, #2a3a6e, #101624);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: #0cc0ff;
-    }
+        .section-kicker {
+            color: #0ff;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
 
-    .price-card {
-      background: #0f1220;
-      border-radius: 2rem;
-      transition: 0.2s all;
-    }
+        .badge-cyber {
+            background: rgba(0, 255, 255, 0.14);
+            color: #0ff;
+            border-radius: 40px;
+            padding: 6px 18px;
+            backdrop-filter: blur(4px);
+            font-weight: 600;
+        }
 
-    .social-icon-circle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 70px;
-      height: 70px;
-      background: rgba(18, 22, 35, 0.8);
-      backdrop-filter: blur(8px);
-      border-radius: 50%;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      transition: all 0.25s ease;
-      color: #b9c8ff;
-      font-size: 2rem;
-      text-decoration: none;
-      margin: 0 0.5rem;
-    }
+        /* ── Buttons ── */
+        .btn-glow {
+            background: linear-gradient(95deg, #00c6ff, #0072ff);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            padding: 12px 32px;
+            border-radius: 60px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 18px rgba(0, 118, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .social-icon-circle:hover {
-      transform: translateY(-8px) scale(1.05);
-      border-color: #0ff;
-      color: #0ff;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-      background: rgba(0, 255, 255, 0.1);
-    }
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
 
-    .social-label {
-      display: block;
-      margin-top: 0.6rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      color: #ccdeff;
-    }
+        .btn-glow:hover {
+            transform: scale(1.03);
+            background: linear-gradient(95deg, #00a1ff, #0059ff);
+            box-shadow: 0 8px 30px rgba(0, 150, 255, 0.6);
+            color: #fff;
+        }
 
-    .social-wrapper {
-      text-align: center;
-    }
+        .btn-glow:active::after {
+            opacity: 0.5;
+        }
 
-    footer {
-      background: #03050b;
-      border-top: 1px solid rgba(0, 255, 255, 0.15);
-    }
+        .btn-outline-cyber {
+            border: 1.5px solid #0ff;
+            background: rgba(0, 255, 255, 0.04);
+            color: #0ff;
+            border-radius: 60px;
+            font-weight: 600;
+            transition: 0.25s;
+            backdrop-filter: blur(4px);
+        }
 
-    .risk-badge {
-      background: rgba(255, 60, 60, 0.12);
-      border-left: 4px solid #ff4d4d;
-      font-size: 0.85rem;
-    }
+        .btn-outline-cyber:hover {
+            background: rgba(0, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            color: #0ff;
+            transform: translateY(-2px);
+        }
 
-    .navbar {
-      background: rgba(8, 12, 22, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-    }
+        .btn-sm {
+            padding: 8px 20px;
+            font-size: 0.85rem;
+        }
 
-    .nav-link {
-      color: #cfdeff !important;
-      font-weight: 500;
-    }
+        /* ── Navbar ── */
+        .navbar {
+            background: rgba(5, 8, 18, 0.88);
+            backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 0.7rem 0;
+            transition: all 0.3s ease;
+        }
 
-    .nav-link:hover {
-      color: #0ff !important;
-    }
+        .navbar.scrolled {
+            background: rgba(2, 4, 12, 0.97);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border-bottom-color: rgba(0, 255, 255, 0.35);
+        }
 
-    h1,
-    h2,
-    h3 {
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
 
-    .badge-cyber {
-      background: #0ff22d1f;
-      color: #0ff;
-      border-radius: 40px;
-      padding: 6px 16px;
-    }
+        .brand-logo-shell {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            padding: 3px;
+            background: linear-gradient(145deg, rgba(201, 151, 78, 0.95), rgba(0, 245, 255, 0.5));
+            box-shadow: 0 0 16px rgba(0, 255, 255, 0.25);
+            transition: 0.25s;
+        }
 
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #0ff33;
-      border: 1px solid cyan;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
+        .brand-logo-shell:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 28px rgba(0, 255, 255, 0.4);
+        }
 
-    .auth-modal .modal-content {
-      background: #0e1120;
-      border: 1px solid #0ff;
-      border-radius: 1.5rem;
-    }
+        .brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 13px;
+        }
 
-    .form-control {
-      background: #1a1f2e;
-      border: 1px solid #2c3145;
-      color: white;
-    }
+        .brand-text-main {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 0.06em;
+            color: #fff;
+            line-height: 1.2;
+        }
 
-    .form-control:focus {
-      background: #1a1f2e;
-      border-color: #0ff;
-      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.25);
-      color: white;
-    }
+        .brand-text-sub {
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            color: #9aaee5;
+            text-transform: uppercase;
+        }
 
-    :root {
-      --cyber-cyan: #00f5ff;
-      --cyber-blue: #0072ff;
-      --deep-bg: #05070e;
-      --card-bg: rgba(18, 22, 35, 0.78);
-      --gold: #c9974e;
-    }
+        .navbar-nav .nav-link {
+            color: #e2eaff !important;
+            font-weight: 500;
+            font-size: 0.92rem;
+            transition: 0.2s;
+            padding: 0.5rem 1.1rem;
+            border-radius: 40px;
+        }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 10% 15%, rgba(0, 245, 255, 0.12), transparent 28%),
-        radial-gradient(circle at 80% 8%, rgba(201, 151, 78, 0.10), transparent 24%),
-        radial-gradient(circle at 50% 90%, rgba(0, 114, 255, 0.12), transparent 28%);
-      z-index: -1;
-    }
+        .navbar-nav .nav-link:hover {
+            color: #0ff !important;
+            background: rgba(0, 255, 255, 0.08);
+        }
 
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      min-width: 220px;
-    }
+        .navbar-toggler {
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            padding: 0.4rem 0.7rem;
+        }
 
-    .brand-logo-shell {
-      width: 52px;
-      height: 52px;
-      border-radius: 18px;
-      padding: 4px;
-      background: linear-gradient(145deg, rgba(201, 151, 78, .95), rgba(0, 245, 255, .35));
-      box-shadow: 0 0 22px rgba(0, 255, 255, .18);
-    }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
 
-    .brand-logo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 22%;
-      border-radius: 14px;
-      display: block;
-      filter: contrast(1.06) saturate(1.08);
-    }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1.5px solid rgba(0, 255, 255, 0.6);
+            transition: 0.25s;
+        }
 
-    .brand-text-main {
-      font-family: 'Space Grotesk', 'Inter', sans-serif;
-      letter-spacing: .08em;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1;
-      font-size: 1.08rem;
-    }
+        .user-avatar:hover {
+            background: rgba(0, 255, 255, 0.25);
+            transform: scale(1.06);
+        }
 
-    .brand-text-sub {
-      color: #9fb1d9;
-      font-size: .72rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-    }
+        .dropdown-menu-cyber {
+            background: rgba(11, 15, 28, 0.95);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 1.2rem;
+            padding: 0.5rem;
+        }
 
-    .brand-wrap:hover .brand-logo-shell {
-      transform: translateY(-1px) scale(1.03);
-      box-shadow: 0 0 28px rgba(0, 255, 255, .30), 0 0 20px rgba(201, 151, 78, .16);
-    }
+        .dropdown-item-cyber {
+            color: #f0f3fa;
+            border-radius: 0.8rem;
+            padding: 0.6rem 1.2rem;
+            transition: 0.2s;
+        }
 
-    .hero-logo-card {
-      width: min(100%, 390px);
-      margin: 0 auto;
-      padding: 1.1rem;
-      border-radius: 2rem;
-      background: linear-gradient(145deg, rgba(255, 255, 255, .06), rgba(18, 22, 35, .78));
-      border: 1px solid rgba(0, 255, 255, .24);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, .28);
-    }
+        .dropdown-item-cyber:hover {
+            background: rgba(0, 255, 255, 0.15);
+            color: #0ff;
+        }
 
-    .hero-logo-card img {
-      width: 100%;
-      border-radius: 1.5rem;
-      display: block;
-      filter: contrast(1.06) saturate(1.08);
-    }
+        /* ── Ticker ── */
+        .ticker-wrap {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.25);
+            border-top: 1px solid rgba(0, 255, 255, 0.15);
+            padding: 8px 0;
+            margin-top: 74px;
+        }
 
-    .hero-stats {
-      background: rgba(255, 255, 255, .035);
-      border: 1px solid rgba(0, 255, 255, .12);
-      border-radius: 1.25rem;
-      padding: 1rem;
-    }
+        @media (max-width: 768px) {
+            .ticker-wrap {
+                margin-top: 66px;
+            }
+        }
 
-    .section-kicker {
-      color: var(--cyber-cyan);
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      font-size: .78rem;
-      font-weight: 800;
-    }
+        .ticker-inner {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            white-space: nowrap;
+            animation: tickerScroll 30s linear infinite;
+        }
 
-    @media (max-width: 576px) {
-      .brand-logo-shell {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-      }
+        .ticker-inner:hover {
+            animation-play-state: paused;
+        }
 
-      .brand-logo {
-        border-radius: 11px;
-      }
+        .ticker-item {
+            display: inline-flex;
+            gap: 0.75rem;
+            background: rgba(0, 255, 255, 0.05);
+            padding: 4px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
 
-      .brand-text-main {
-        font-size: .92rem;
-      }
+        .price-up {
+            color: #00ffb3;
+        }
+        .price-down {
+            color: #ff4d6d;
+        }
 
-      .brand-text-sub {
-        font-size: .62rem;
-      }
+        @keyframes tickerScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
 
-      .navbar .container {
-        gap: .4rem;
-      }
-    }
-  </style>
+        /* Live indicator */
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4d6d;
+            margin-right: 6px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .live-indicator.on {
+            background: #00ffb3;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* ── Hero ── */
+        .hero-logo-card {
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 1.2rem;
+            border-radius: 2rem;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(18, 22, 35, 0.8));
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-logo-card img {
+            width: 100%;
+            border-radius: 1.4rem;
+            display: block;
+        }
+
+        .hero-stats {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.12);
+            border-radius: 1.25rem;
+            padding: 1rem 1.5rem;
+        }
+
+        /* ── Markets ── */
+        .market-icon {
+            font-size: 2.8rem;
+            color: #0cc0ff;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .glass-card:hover .market-icon {
+            transform: scale(1.12) rotate(-3deg);
+            color: #0ff;
+        }
+
+        /* ── Price Cards ── */
+        .price-card {
+            background: #0b0f1a;
+            border-radius: 2rem;
+            transition: 0.3s;
+        }
+
+        .price-card .glass-card {
+            background: rgba(12, 16, 28, 0.8);
+        }
+
+        /* ── Affiliate Partners Grid ── */
+        .partner-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.12);
+            border-radius: 1.4rem;
+            padding: 1.25rem 1.5rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #f0f3fa;
+        }
+
+        .partner-card:hover {
+            border-color: #0ff;
+            background: rgba(0, 255, 255, 0.06);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.12);
+            color: #f0f3fa;
+        }
+
+        .partner-card .partner-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: rgba(0, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #0ff;
+            flex-shrink: 0;
+        }
+
+        .partner-card .partner-info {
+            flex: 1;
+        }
+        .partner-card .partner-info h6 {
+            margin: 0;
+            font-weight: 700;
+        }
+        .partner-card .partner-info small {
+            color: #9aaee5;
+        }
+
+        /* ── Social ── */
+        .social-icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: rgba(18, 22, 35, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-size: 2rem;
+            text-decoration: none;
+            color: #b9c8ff;
+        }
+
+        .social-icon-circle:hover {
+            transform: translateY(-8px) scale(1.06);
+            border-color: #0ff;
+            color: #0ff;
+            box-shadow: 0 0 28px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 255, 255, 0.13);
+        }
+
+        .social-label {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #ccdeff;
+        }
+
+        /* ── Risk Badge ── */
+        .risk-badge {
+            background: rgba(255, 60, 60, 0.08);
+            border-left: 4px solid #ff4d6d;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* ── Auth Modal ── */
+        .auth-modal .modal-content {
+            background: #0b0f1d;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 1.8rem;
+        }
+
+        .form-control {
+            background: #161c2e;
+            border: 1px solid #2c3145;
+            color: #fff;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+        }
+
+        .form-control:focus {
+            background: #161c2e;
+            border-color: #0ff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #6a7a9e;
+        }
+
+        .password-strength {
+            height: 4px;
+            border-radius: 6px;
+            margin-top: 8px;
+            transition: width 0.25s;
+            background: #2c2f3e;
+        }
+
+        /* ── Toast ── */
+        .toast-notif {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: rgba(11, 15, 28, 0.92);
+            backdrop-filter: blur(18px);
+            border-left: 5px solid #0ff;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 60px;
+            z-index: 1200;
+            font-weight: 500;
+            transform: translateX(130%);
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            pointer-events: none;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast-notif.show {
+            transform: translateX(0);
+        }
+
+        /* ── Competition / VS Badge ── */
+        .vs-badge {
+            font-size: 3.8rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            animation: vsPulse 2.2s ease-in-out infinite;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            border: 2px solid #0ff;
+            backdrop-filter: blur(8px);
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        @keyframes vsPulse {
+            0% { transform: scale(1); text-shadow: 0 0 20px #0ff, 0 0 40px #0072ff; }
+            50% { transform: scale(1.08); text-shadow: 0 0 40px #0ff, 0 0 80px #0072ff, 0 0 120px #00c6ff; }
+            100% { transform: scale(1); text-shadow: 0 0 20px #0ff, 0 0 40px #0072ff; }
+        }
+
+        .competition-card {
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+        .competition-card:hover {
+            border-color: #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+        }
+
+        .price-drop {
+            background: rgba(255, 77, 109, 0.12);
+            border: 2px dashed #ff4d6d;
+            border-radius: 2rem;
+            padding: 1.5rem;
+        }
+
+        /* ── Countdown ── */
+        .countdown-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            display: inline-flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .countdown-item {
+            text-align: center;
+            min-width: 60px;
+        }
+        .countdown-item .number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0ff;
+            line-height: 1;
+        }
+        .countdown-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #9aaee5;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Leaderboard ── */
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.2s;
+        }
+        .leaderboard-entry:hover {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 0.8rem;
+        }
+        .leaderboard-rank {
+            font-weight: 800;
+            color: #0ff;
+            width: 30px;
+            text-align: center;
+        }
+        .leaderboard-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0ff;
+        }
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        .leaderboard-profit {
+            color: #00ffb3;
+            font-weight: 700;
+        }
+        .leaderboard-profit.negative {
+            color: #ff4d6d;
+        }
+
+        /* ── Testimonials ── */
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+        .testimonial-card:hover {
+            border-color: #0ff;
+            transform: translateY(-4px);
+        }
+        .testimonial-card .stars {
+            color: #ffd700;
+            letter-spacing: 2px;
+        }
+
+        /* ── Comparison Table ── */
+        .comparison-table th {
+            color: #0ff;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        }
+        .comparison-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 0.5rem;
+        }
+        .comparison-table .highlight {
+            color: #0ff;
+            font-weight: 600;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 576px) {
+            .brand-logo-shell {
+                width: 38px;
+                height: 38px;
+            }
+            .brand-text-main {
+                font-size: 0.85rem;
+            }
+            .brand-text-sub {
+                font-size: 0.55rem;
+            }
+            .navbar .container {
+                gap: 0.3rem;
+            }
+            .hero-logo-card {
+                max-width: 280px;
+            }
+            .social-icon-circle {
+                width: 58px;
+                height: 58px;
+                font-size: 1.5rem;
+            }
+            .partner-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .partner-card .partner-icon {
+                width: 48px;
+                height: 48px;
+            }
+            .vs-badge {
+                font-size: 2.8rem;
+                padding: 0.1rem 0.8rem;
+            }
+            .countdown-box {
+                gap: 0.8rem;
+            }
+            .countdown-item .number {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .navbar-nav {
+                padding: 0.5rem 0;
+            }
+            .navbar-nav .nav-link {
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- Navigation with user state -->
-  <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-      <a class="navbar-brand brand-wrap" href="#" aria-label="Kavier Capital Group home">
-        <span class="brand-logo-shell">
-          <img class="brand-logo" src="logo.png" alt="Kavier Capital Group logo">
-        </span>
-        <span>
-          <span class="brand-text-main">KAVIER <span class="text-info">CAPITAL</span></span>
-          <span class="brand-text-sub d-block">Capital Group</span>
-        </span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-        <span class="navbar-toggler-icon bg-light rounded"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-3">
-          <li class="nav-item"><a class="nav-link" href="#markets">Markets</a></li>
-          <li class="nav-item"><a class="nav-link" href="#signals">Signals Elite</a></li>
-          <li class="nav-item"><a class="nav-link" href="#affiliates">Affiliates</a></li>
-          <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
-        </ul>
-        <div class="d-flex align-items-center ms-3 gap-2" id="authButtons">
-          <button class="btn btn-outline-cyber btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
-            id="loginNavBtn">Login</button>
-          <button class="btn btn-glow btn-sm" data-bs-toggle="modal" data-bs-target="#authModal" id="signupNavBtn">Sign
-            Up</button>
-        </div>
-        <div class="d-flex align-items-center ms-3 gap-2 d-none" id="userInfo">
-          <span class="text-light small" id="userEmailDisplay"></span>
-          <div class="user-avatar" id="userAvatarBtn" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-user-astronaut text-info"></i>
-          </div>
-          <ul class="dropdown-menu dropdown-menu-end" style="background:#0e1120; border:1px solid cyan;">
-            <li><a class="dropdown-item text-light" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
-                Logout</a></li>
-          </ul>
-        </div>
-      </div>
+    <!-- ─── Toast ─── -->
+    <div id="liveToast" class="toast-notif"><i class="fas fa-bolt text-info me-2"></i> <span id="toastMsg">Action</span>
     </div>
-  </nav>
 
-  <!-- Hero & rest of content -->
-  <section class="gradient-bg pt-5 mt-5" style="padding-bottom: 4rem;">
-    <div class="container pt-5">
-      <div class="row align-items-center g-5">
-        <div class="col-lg-7">
-          <span class="badge-cyber"><i class="fas fa-charging-station"></i> live intelligence • 360° markets</span>
-          <h1 class="display-3 fw-bold mt-3">Trade the <span class="text-info neon-text">universe</span> of finance</h1>
-          <p class="lead fs-4">Futures • Crypto • Forex • Stocks • Meme Coins — all in one ecosystem. Access
-            institutional-grade signals & AI-driven market analytics that tell you exactly when to enter and exit.</p>
-          <div class="d-flex flex-wrap gap-3 mt-4">
-            <a href="#signals" class="btn btn-glow btn-lg"><i class="fas fa-bell"></i> Subscribe to Signals</a>
-            <a href="#markets" class="btn btn-outline-cyber btn-lg"><i class="fas fa-globe"></i> Explore Markets</a>
-          </div>
-          <div class="mt-4 d-flex gap-4 flex-wrap hero-stats">
-            <div><i class="fas fa-chart-simple text-info"></i> <strong>+5000</strong> signals delivered</div>
-            <div><i class="fas fa-users text-info"></i> <strong>87%</strong> trader satisfaction*</div>
-            <div><i class="fas fa-clock text-info"></i> 24/7 market coverage</div>
-          </div>
-        </div>
-        <div class="col-lg-5 text-center">
-          <div class="hero-logo-card mb-4">
-            <img src="logo.png" alt="Kavier Capital Group logo">
-          </div>
-          <div class="glass-card p-4">
-            <div class="section-kicker mb-2">Signal Intelligence Hub</div>
-            <h4>Where analysts & algorithms merge</h4>
-            <p>Real-time buy/sell levels, stop-loss & take-profit recommendations adapted to volatility.</p>
-            <div class="small text-secondary">*based on internal surveys — past results do not guarantee future profits
+    <!-- ─── NAVBAR ─── -->
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand brand-wrap" href="#" aria-label="Kavier Capital Group">
+                <span class="brand-logo-shell">
+                    <img class="brand-logo" src="logo.png" alt="Kavier Capital Group logo">
+                </span>
+                <span>
+                    <span class="brand-text-main">KAVIER <span class="text-info">CAPITAL</span></span>
+                    <span class="brand-text-sub d-block">Capital Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1 gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#markets">Markets</a></li>
+                <li class="nav-item"><a class="nav-link" href="#competition">Competition</a></li>
+                <li class="nav-item"><a class="nav-link" href="#signals">Signals</a></li>
+                <li class="nav-item"><a class="nav-link" href="#affiliates">Affiliates</a></li>
+                <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
+            </ul>
+            <div class="d-flex align-items-center ms-3 gap-2" id="authButtons">
+                <button class="btn btn-outline-cyber btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
+                id="loginNavBtn">Login</button>
+                <button class="btn btn-glow btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
+                id="signupNavBtn">Sign Up</button>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Markets section -->
-  <section id="markets" class="container py-5">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold"><span class="border-bottom border-info border-3 pb-2">5 markets, limitless
-          possibilities</span></h2>
-      <p class="fs-5 mt-3">From traditional indices to viral meme coins — we provide infrastructure & signals for every
-        trader.</p>
-    </div>
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-4 col-xl">
-        <div class="glass-card p-4 h-100 text-center"><i class="fas fa-chart-line market-icon fs-1"></i>
-          <h4 class="mt-3">Futures Trading</h4>
-          <p>ES, NQ, YM, Gold, Oil — trade futures with precision signals & institutional order flow.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4 col-xl">
-        <div class="glass-card p-4 h-100 text-center"><i class="fab fa-bitcoin market-icon fs-1"></i>
-          <h4 class="mt-3">Crypto Trading</h4>
-          <p>BTC, ETH, SOL, altcoins — 24/7 crypto signals with on-chain analysis.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4 col-xl">
-        <div class="glass-card p-4 h-100 text-center"><i class="fas fa-dollar-sign market-icon fs-1"></i>
-          <h4 class="mt-3">Forex Trading</h4>
-          <p>Major, minor & exotic pairs. High-probability setups + risk management.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4 col-xl">
-        <div class="glass-card p-4 h-100 text-center"><i class="fas fa-building market-icon fs-1"></i>
-          <h4 class="mt-3">Stock Trading</h4>
-          <p>US large caps, growth stocks, & swing trading blueprints.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4 col-xl">
-        <div class="glass-card p-4 h-100 text-center"><i class="fas fa-dog market-icon fs-1"></i>
-          <h4 class="mt-3">Meme Coins</h4>
-          <p>DOGE, SHIB, PEPE, WIF — high-volatility signals with momentum strategies.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SIGNAL SUBSCRIPTION -->
-  <section id="signals" class="container py-5">
-    <div class="row align-items-center mb-5">
-      <div class="col-lg-6">
-        <span class="badge-cyber mb-2"><i class="fas fa-charging-station"></i> premium service</span>
-        <h2 class="display-5 fw-bold">AI + Analyst <span class="text-info">Signal Suite</span></h2>
-        <p class="fs-5">Subscribe to our intelligent signal network. Get precise buy/sell recommendations, stop-loss,
-          take-profit levels, and market commentary — delivered via Telegram, Discord & email.</p>
-        <ul class="list-unstyled mt-3">
-          <li><i class="fas fa-check-circle text-info me-2"></i> Daily high-probability setups</li>
-          <li><i class="fas fa-check-circle text-info me-2"></i> Real-time entry/exit alerts</li>
-          <li><i class="fas fa-check-circle text-info me-2"></i> Custom risk-to-reward guidance</li>
-          <li><i class="fas fa-check-circle text-info me-2"></i> Educational webinars + trade recaps</li>
-        </ul>
-      </div>
-      <div class="col-lg-6">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="price-card p-4 text-center h-100 glass-card">
-              <h4>Starter Signal</h4>
-              <div class="display-6 fw-bold text-info">K150<span style="font-size:1rem">/mo</span></div>
-              <hr>
-              <p>Forex + Stocks & Crypto mix<br>5-8 signals/week<br>Basic analytics</p><button
-                class="btn btn-outline-cyber w-100 subscribe-demo" data-plan="starter">Start Trial <i
-                  class="fas fa-arrow-right"></i></button>
+            <div class="d-flex align-items-center ms-3 gap-2 d-none" id="userInfo">
+                <span class="text-light small fw-semibold" id="userEmailDisplay"></span>
+                <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-astronaut text-info"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-cyber dropdown-menu-end">
+                    <li><a class="dropdown-item dropdown-item-cyber" href="#" id="logoutBtn"><i
+                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="price-card p-4 text-center h-100 glass-card" style="border-top: 3px solid cyan;">
-              <h4>Pro Elite <span class="badge bg-info text-dark">🔥 most traded</span></h4>
-              <div class="display-6 fw-bold text-info">k400<span style="font-size:1rem">/mo</span></div>
-              <hr>
-              <p>All markets + Meme Coins • 15+ signals/week • 1:1 Q&A • trade journal</p><button
-                class="btn btn-glow w-100 subscribe-demo" data-plan="elite">Join Elite <i
-                  class="fas fa-gem"></i></button>
-            </div>
-          </div>
         </div>
-        <div class="mt-3 text-center small text-secondary">*Cancel anytime, recurring subscription.</div>
-      </div>
-    </div>
-  </section>
+    </nav>
 
-  <!-- Affiliate section -->
-  <section id="affiliates" class="container py-5">
+    <!-- ─── TICKER ─── -->
+    <div class="ticker-wrap">
+        <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
+            <div class="ticker-inner" id="marketTicker"></div>
+            <div class="ms-3 d-none d-md-block">
+                <span class="live-indicator" id="liveIndicator"></span>
+                <span class="small text-secondary" id="liveStatus">Connecting...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── HERO ─── -->
+    <section class="pt-5 mt-2" style="padding-bottom: 3.5rem;">
+        <div class="container pt-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <span class="badge-cyber d-inline-block mb-2"><i class="fas fa-bolt"></i> LIVE INTELLIGENCE • 360°
+                    MARKETS</span>
+                    <h1 class="display-3 fw-bold mt-3">Trade the <span class="text-info neon-text">universe</span> of
+                    finance</h1>
+                    <p class="lead fs-4 opacity-75">Futures • Crypto • Forex • Stocks • Meme Coins — institutional-grade
+                        signals & AI-driven analytics.</p>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <a href="#signals" class="btn btn-glow btn-lg"><i class="fas fa-bell"></i> Subscribe to
+                        Signals</a>
+                        <a href="#markets" class="btn btn-outline-cyber btn-lg"><i class="fas fa-globe"></i> Explore
+                        Markets</a>
+                    </div>
+                    <div class="mt-5 d-flex gap-4 flex-wrap hero-stats">
+                        <div><i class="fas fa-chart-simple text-info"></i> <strong>+12,400</strong> signals delivered
+                        </div>
+                        <div><i class="fas fa-users text-info"></i> <strong>89%</strong> trader satisfaction*</div>
+                        <div><i class="fas fa-clock text-info"></i> 24/7 live coverage</div>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <div class="hero-logo-card mb-4">
+                        <img src="logo.png" alt="Kavier Capital Group">
+                    </div>
+                    <div class="glass-card p-4">
+                        <div class="section-kicker mb-1">⚡ Signal Intelligence Hub</div>
+                        <h5 class="fw-semibold">Where algos &amp; analysts unite</h5>
+                        <p class="small">Real-time buy/sell levels, stop-loss &amp; TP adapted to volatility.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── MARKETS ─── -->
+    <section id="markets" class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold"><span class="border-bottom border-info border-3 pb-2">5 markets, limitless
+                possibilities</span></h2>
+            <p class="fs-5 mt-3 opacity-75">From indices to meme coins — comprehensive infrastructure &amp; signals.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4 col-xl">
+                <div class="glass-card p-4 h-100 text-center">
+                    <i class="fas fa-chart-line market-icon"></i>
+                    <h4 class="mt-3">Futures Trading</h4>
+                    <p>ES, NQ, Gold, Oil — order flow &amp; precision signals.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl">
+                <div class="glass-card p-4 h-100 text-center">
+                    <i class="fab fa-bitcoin market-icon"></i>
+                    <h4 class="mt-3">Crypto Trading</h4>
+                    <p>BTC, ETH, SOL, altcoins — 24/7 on-chain signals.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl">
+                <div class="glass-card p-4 h-100 text-center">
+                    <i class="fas fa-dollar-sign market-icon"></i>
+                    <h4 class="mt-3">Forex Trading</h4>
+                    <p>Major &amp; exotic pairs with risk framework.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl">
+                <div class="glass-card p-4 h-100 text-center">
+                    <i class="fas fa-building market-icon"></i>
+                    <h4 class="mt-3">Stock Trading</h4>
+                    <p>US large caps, growth stocks &amp; swing setups.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl">
+                <div class="glass-card p-4 h-100 text-center">
+                    <i class="fas fa-dog market-icon"></i>
+                    <h4 class="mt-3">Meme Coins</h4>
+                    <p>DOGE, SHIB, PEPE — high-volatility momentum.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── COMPETITION ─── -->
+    <section id="competition" class="container py-5">
+        <div class="glass-card p-4 p-xl-5">
+            <div class="text-center mb-4">
+                <span class="badge-cyber"><i class="fas fa-trophy"></i> SUMMER SHOWDOWN 2026</span>
+                <h2 class="display-5 fw-bold mt-2">Kavier Capital <span class="text-info">vs</span> Sniper Fedix</h2>
+                <p class="fs-5 opacity-75">June – September • Who will dominate the markets?</p>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div class="text-center mb-4">
+                <div class="countdown-box" id="countdownContainer">
+                    <div class="countdown-item">
+                        <div class="number" id="countdownDays">00</div>
+                        <div class="label">Days</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="number" id="countdownHours">00</div>
+                        <div class="label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="number" id="countdownMinutes">00</div>
+                        <div class="label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="number" id="countdownSeconds">00</div>
+                        <div class="label">Seconds</div>
+                    </div>
+                </div>
+                <small class="text-secondary">⏳ Until the competition ends</small>
+            </div>
+
+            <!-- Versus Grid -->
+            <div class="row g-4 align-items-stretch">
+                <div class="col-md-5">
+                    <div class="glass-card p-4 h-100 text-center competition-card" style="border-color: rgba(0, 255, 255, 0.5);">
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <i class="fas fa-shield-halved text-info fs-2"></i>
+                            <h3 class="text-info mb-0">Kavier Capital</h3>
+                        </div>
+                        <ul class="list-unstyled text-start mt-3">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> AI-driven precision signals</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 24/7 multi-market coverage</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Institutional order flow</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Risk-managed frameworks</li>
+                        </ul>
+                        <div class="mt-3 small text-info">🔥 Current leader in win-rate</div>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-center justify-content-center my-4 my-md-0">
+                    <span class="vs-badge">VS</span>
+                </div>
+                <div class="col-md-5">
+                    <div class="glass-card p-4 h-100 text-center competition-card" style="border-color: rgba(255, 200, 0, 0.4);">
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <i class="fas fa-bullseye fs-2" style="color: #ffd700;"></i>
+                            <h3 style="color: #ffd700;">Sniper Fedix</h3>
+                        </div>
+                        <ul class="list-unstyled text-start mt-3">
+                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> Hyper-precision entries</li>
+                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> High-risk momentum plays</li>
+                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> Aggressive growth strategies</li>
+                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> Niche market exploiting</li>
+                        </ul>
+                        <div class="mt-3 small text-warning">⚡ Known for explosive moves</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Price Promotion -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="price-drop text-center">
+                        <h3 class="fw-bold">🚀 Special Summer Competition Price</h3>
+                        <p class="fs-2 mb-2">
+                            <span style="text-decoration: line-through; color: #ff4d6d; font-size: 2rem;">K 450</span>
+                            <span class="text-info fw-bold display-5"> K 250</span>
+                            <span class="badge bg-danger ms-3" style="font-size: 1rem;">Limited Time</span>
+                        </p>
+                        <p class="opacity-75">Secure your spot in the Kavier Capital vs Sniper Fedix battle.<br>Exclusive offer valid <strong>June – September</strong>.</p>
+                        <button class="btn btn-glow btn-lg subscribe-demo" data-plan="competition">Claim K250 Offer <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── SIGNALS ─── -->
+    <section id="signals" class="container py-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <span class="badge-cyber mb-2"><i class="fas fa-charging-station"></i> premium service</span>
+                <h2 class="display-5 fw-bold">AI + Analyst <span class="text-info">Signal Suite</span></h2>
+                <p class="fs-5 opacity-75">Subscribe to intelligent signal network: precise entries, SL/TP levels &amp;
+                    commentary via Telegram/Discord.</p>
+                <ul class="list-unstyled mt-3">
+                    <li><i class="fas fa-check-circle text-info me-2"></i> Daily high-probability setups</li>
+                    <li><i class="fas fa-check-circle text-info me-2"></i> Real-time entry/exit alerts</li>
+                    <li><i class="fas fa-check-circle text-info me-2"></i> Custom risk-to-reward guidance</li>
+                    <li><i class="fas fa-check-circle text-info me-2"></i> Educational webinars &amp; recaps</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="price-card p-4 text-center h-100 glass-card">
+                            <h4>Starter Signal</h4>
+                            <div class="display-6 fw-bold text-info">K150<span style="font-size:1rem">/mo</span></div>
+                            <hr class="bg-secondary opacity-25">
+                            <p>Forex + Stocks &amp; Crypto mix<br>5–8 signals/week</p>
+                            <button class="btn btn-outline-cyber w-100 subscribe-demo" data-plan="starter">Start Trial <i
+                                class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="price-card p-4 text-center h-100 glass-card"
+                        style="border-top: 3px solid cyan;">
+                        <h4>Pro Elite <span class="badge bg-info text-dark">🔥 most traded</span></h4>
+                        <div class="display-6 fw-bold text-info">k400<span style="font-size:1rem">/mo</span></div>
+                        <hr class="bg-secondary opacity-25">
+                        <p>All markets + Meme Coins • 15+ signals/week • 1:1 Q&amp;A</p>
+                        <button class="btn btn-glow w-100 subscribe-demo" data-plan="elite">Join Elite <i
+                            class="fas fa-gem"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signal Feed Demo -->
+    <div class="glass-card p-4 mt-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="fas fa-waveform text-info"></i>
+            <span class="fw-bold">Latest Signal Alerts</span>
+            <span class="badge bg-success ms-2">Live</span>
+        </div>
+        <div class="signal-feed" id="signalFeed" style="max-height:280px;overflow-y:auto;">
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                <span><i class="fas fa-arrow-up text-success"></i> BTCUSD LONG</span>
+                <span>Entry: 68420 | TP: 69200</span>
+                <span class="text-info small">🔥 2h ago</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                <span><i class="fas fa-arrow-down text-danger"></i> ES Futures SHORT</span>
+                <span>Entry: 5125 | SL: 5145</span>
+                <span class="text-info small">4h ago</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                <span><i class="fas fa-arrow-up text-success"></i> PEPE/USDT</span>
+                <span>Entry: 0.0000123 | TP: 0.000014</span>
+                <span class="text-info small">6h ago</span>
+            </div>
+        </div>
+        <div class="text-center mt-2"><small class="text-secondary">*Past signals demo — real-time after subscription</small></div>
+    </div>
+</section>
+
+<!-- ─── AFFILIATES ─── -->
+<section id="affiliates" class="container py-5">
     <div class="glass-card p-4 p-xl-5">
-      <div class="text-center mb-4">
-        <h2 class="display-5 fw-bold"><i class="fas fa-handshake text-info"></i> Affiliate & Partnership Network</h2>
-        <p class="fs-5">Earn generous commissions by referring traders to top-tier brokers & prop trading firms.</p>
-      </div>
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4"><i
-              class="fas fa-chart-simple fa-2x text-info"></i>
-            <div><strong>Premium Brokers</strong><br>OANDA, Binance, Bybit, Interactive Brokers — earn up to 40%
-              revshare.</div>
-          </div>
+        <div class="text-center mb-4">
+            <h2 class="display-5 fw-bold"><i class="fas fa-handshake text-info"></i> Affiliate &amp; Partnership Network</h2>
+            <p class="fs-5 opacity-75">Earn generous commissions by referring traders to top-tier brokers &amp; prop firms.</p>
         </div>
-        <div class="col-md-6">
-          <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4"><i
-              class="fas fa-trophy fa-2x text-info"></i>
-            <div><strong>Leading Prop Firms</strong><br>FTMO, MyFundedFutures, The Funded Trader — challenge discounts &
-              affiliate codes.</div>
-          </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6 col-lg-4">
+                <a href="https://app.equityedge.io/signup/KAVIER/" target="_blank" rel="noopener" class="partner-card">
+                    <div class="partner-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="partner-info">
+                        <h6>EquityEdge</h6>
+                        <small>Premium trading signals &amp; analytics</small>
+                    </div>
+                    <i class="fas fa-arrow-right text-info opacity-50"></i>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="https://one.exnessonelink.com/a/5kfa8vx566?source=app&platform=mobile&pid=mobile_share" target="_blank" rel="noopener" class="partner-card">
+                    <div class="partner-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="partner-info">
+                        <h6>Exness</h6>
+                        <small>Global forex &amp; CFD broker</small>
+                    </div>
+                    <i class="fas fa-arrow-right text-info opacity-50"></i>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="https://one.justmarkets.link/a/trejnc0v5q" target="_blank" rel="noopener" class="partner-card">
+                    <div class="partner-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="partner-info">
+                        <h6>JustMarkets</h6>
+                        <small>Multi-asset trading platform</small>
+                    </div>
+                    <i class="fas fa-arrow-right text-info opacity-50"></i>
+                </a>
+            </div>
         </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="bg-dark p-3 rounded-4 text-center">
-            <p class="mb-2"><i class="fas fa-chart-line text-info"></i> <strong>Join our affiliate program
-                today:</strong> dedicated dashboards, weekly payouts.</p><button
-              class="btn btn-outline-cyber affiliate-join-btn">Become an Affiliate <i
-                class="fas fa-rocket"></i></button>
-          </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
+                    <i class="fas fa-chart-simple fa-2x text-info"></i>
+                    <div><strong>Premium Brokers</strong><br>OANDA, Binance, Bybit, Interactive Brokers — up to 40% revshare.</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
+                    <i class="fas fa-trophy fa-2x text-info"></i>
+                    <div><strong>Leading Prop Firms</strong><br>FTMO, MyFundedFutures, The Funded Trader — challenge discounts &amp; affiliate codes.</div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-outline-cyber affiliate-join-btn">Become an Affiliate <i class="fas fa-rocket"></i></button>
+        </div>
     </div>
-  </section>
+</section>
 
-  <!-- Social Community -->
-  <section id="community" class="container py-5">
-    <div class="row g-5 align-items-center">
-      <div class="col-md-6">
-        <h2 class="display-5 fw-bold">Connect, Learn & Grow</h2>
-        <p>Join our vibrant trading community across social platforms. Daily market recaps, live streams, and exclusive
-          signal updates.</p>
-        <div class="d-flex flex-wrap justify-content-start gap-4 mt-4">
-          <div class="social-wrapper"><a href="#" class="social-icon-circle" target="_blank"><i
-                class="fab fa-youtube"></i></a><span class="social-label">YouTube</span></div>
-          <div class="social-wrapper"><a href="#" class="social-icon-circle" target="_blank"><i
-                class="fab fa-instagram"></i></a><span class="social-label">Instagram</span></div>
-          <div class="social-wrapper"><a href="#" class="social-icon-circle" target="_blank"><i
-                class="fab fa-twitter"></i></a><span class="social-label">X (Twitter)</span></div>
-          <div class="social-wrapper"><a href="#" class="social-icon-circle" target="_blank"><i
-                class="fab fa-discord"></i></a><span class="social-label">Discord</span></div>
-          <div class="social-wrapper"><a href="#" class="social-icon-circle" target="_blank"><i
-                class="fab fa-telegram"></i></a><span class="social-label">Telegram</span></div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="glass-card p-4 text-center"><i class="fas fa-users fa-3x text-info mb-3"></i>
-          <h4>12,000+ active traders</h4>
-          <p>Real-time chat, mentoring sessions, and copy-trade insights.</p><button
-            class="btn btn-sm btn-glow join-community-demo">Join Community <i class="fab fa-discord"></i></button>
-        </div>
-      </div>
+<!-- ─── COMMUNITY + LEADERBOARD ─── -->
+<section id="community" class="container py-5">
+    <div class="row align-items-start g-5">
+        <div class="col-lg-6">
+            <h2 class="display-5 fw-bold">Connect, Learn &amp; Grow</h2>
+            <p class="opacity-75">Join our vibrant trading community across social platforms. Daily recaps, live streams, and exclusive signals.</p>
+            <div class="d-flex flex-wrap gap-4 mt-4">
+                <div class="text-center">
+                    <a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank" class="social-icon-circle"><i class="fab fa-facebook"></i></a>
+                    <span class="social-label">Facebook</span>
+                </div>
+                <div class="text-center">
+                    <a href="https://www.instagram.com/kcg_official1?utm_source=qr" target="_blank" class="social-icon-circle"><i class="fab fa-instagram"></i></a>
+                    <span class="social-label">Instagram</span>
+                </div>
+                <div class="text-center">
+                    <a href="#" target="_blank" class="social-icon-circle"><i class="fab fa-twitter"></i></a>
+                    <span class="social-label">X (Twitter)</span>
+                </div>
+                <div class="text-center">
+                    <a href="https://discord.gg/QsvgBQQHg" target="_blank" class="social-icon-circle"><i class="fab fa-discord"></i></a>
+                    <span class="social-label">Discord</span>
+                </div>
+                <div class="text-center">
+                    <a href="https://t.me/KCG01Africa" target="_blank" class="social-icon-circle"><i class="fab fa-telegram"></i></a>
+                    <span class="social-label">Telegram</span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="glass-card p-4 text-center">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h4>12,000+ active traders</h4>
+                    <p>Real-time chat, mentoring &amp; copy-trade insights.</p>
+                    <button class="btn btn-glow join-community-demo">Join Community <i class="fab fa-discord"></i></button>
+                </div>
+            </div>
+        
     </div>
-  </section>
+</section>
 
-  <!-- RISK DISCLAIMER -->
-  <div class="container mb-4">
-    <div class="risk-badge p-3 rounded-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i><strong>⚠️
-        HIGH-RISK DISCLAIMER:</strong> Trading futures, crypto, forex, stocks, and meme coins involves substantial risk
-      of loss. Past performance does not guarantee future results. By using our services you acknowledge that Kavier
-      Capital nor its affiliates assume any responsibility for your trading losses.</div>
-  </div>
+<!-- ─── TESTIMONIALS ─── -->
+<section class="container py-5">
+    <div class="glass-card p-4 p-xl-5">
+        <h2 class="text-center display-5 fw-bold mb-4">What Our <span class="text-info">Traders Say</span></h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="mt-2">"Kavier signals have been a game changer. I've grown my account 40% in just 2 months."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <div class="leaderboard-avatar" style="width:32px;height:32px;">MT</div>
+                        <div><strong>Mark T.</strong><br><small class="text-secondary">Futures trader</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="mt-2">"The AI entries are incredibly accurate. I stopped overtrading and started winning consistently."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <div class="leaderboard-avatar" style="width:32px;height:32px;">SL</div>
+                        <div><strong>Sarah L.</strong><br><small class="text-secondary">Crypto & forex</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="mt-2">"Kavier's community is amazing. I've learned so much from the daily recaps and live streams."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <div class="leaderboard-avatar" style="width:32px;height:32px;">RJ</div>
+                        <div><strong>Ricky J.</strong><br><small class="text-secondary">Swing trader</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-  <!-- Auth Modal -->
-  <div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+<!-- ─── RISK DISCLAIMER ─── -->
+<div class="container mb-4">
+    <div class="risk-badge">
+        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+        <strong>⚠️ HIGH-RISK DISCLAIMER:</strong> Trading futures, crypto, forex, stocks, and meme coins involves substantial risk of loss. Past performance does not guarantee future results. By using our services you acknowledge that Kavier Capital nor its affiliates assume any responsibility for your trading losses.
+    </div>
+</div>
+
+<!-- ─── AUTH MODAL ─── -->
+<div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header border-bottom border-info">
-          <h5 class="modal-title text-info" id="authModalLabel"><i class="fas fa-user-astronaut"></i> <span
-              id="authModeText">Login</span></h5><button type="button" class="btn-close btn-close-white"
-            data-bs-dismiss="modal"></button>
+        <div class="modal-content">
+            <div class="modal-header border-bottom border-info">
+                <h5 class="modal-title text-info"><i class="fas fa-user-astronaut"></i> <span id="authModeText">Login</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="authForm">
+                    <div class="mb-3">
+                        <label class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="authEmail" required placeholder="trader@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="authPassword" required placeholder="••••••••">
+                        <div id="strengthBar" class="password-strength mt-1"></div>
+                        <div id="strengthText" class="small text-secondary mt-1"></div>
+                    </div>
+                    <div id="authError" class="text-danger small mb-2"></div>
+                    <button type="submit" class="btn btn-glow w-100" id="authSubmitBtn">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="#" id="toggleAuthMode" class="text-info">Need an account? Sign up</a>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="authForm">
-            <div class="mb-3"><label class="form-label">Email address</label><input type="email" class="form-control"
-                id="authEmail" required placeholder="trader@example.com"></div>
-            <div class="mb-3"><label class="form-label">Password</label><input type="password" class="form-control"
-                id="authPassword" required placeholder="••••••••"></div>
-            <div id="authError" class="text-danger small mb-2"></div>
-            <button type="submit" class="btn btn-glow w-100" id="authSubmitBtn">Login</button>
-          </form>
-          <div class="text-center mt-3"><a href="#" id="toggleAuthMode" class="text-info">Need an account? Sign up</a>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <footer class="pt-5 pb-4 mt-3">
+<!-- ─── FOOTER ─── -->
+<footer class="pt-5 pb-4 mt-3" style="background:#03050b;border-top:1px solid rgba(0,255,255,0.12);">
     <div class="container">
-      <div class="row">
-        <div class="col-md-5 mb-4">
-          <h4 class="fw-bold d-flex align-items-center gap-2"><img src="logo.png" alt="Kavier logo"
-              style="width:38px;height:38px;object-fit:cover;border-radius:12px;"> KAVIER<span class="text-info">
-              CAPITAL</span></h4>
-          <p>Where data-driven signals meet multi-market execution.</p>
-          <div class="small text-secondary">© 2026 Kavier Capital Group — unlocking financial frontiers.</div>
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <h4 class="fw-bold d-flex align-items-center gap-2">
+                    <img src="logo.png" alt="Kavier logo" style="width:38px;height:38px;object-fit:cover;border-radius:12px;">
+                    KAVIER<span class="text-info"> CAPITAL</span>
+                </h4>
+                <p>Where data-driven signals meet multi-market execution.</p>
+                <div class="small text-secondary">© 2026 Kavier Capital Group — unlocking financial frontiers.</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h6>Services</h6>
+                <ul class="list-unstyled small">
+                    <li>Futures Signals</li>
+                    <li>Crypto Signals</li>
+                    <li>Forex &amp; Stocks</li>
+                    <li>Meme Coin Analysis</li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h6>Affiliates</h6>
+                <ul class="list-unstyled small">
+                    <li>Broker Partners</li>
+                    <li>Prop Firm Program</li>
+                    <li>Ambassador</li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h6>Social</h6>
+                <ul class="list-unstyled d-flex gap-3">
+                    <li><a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank" class="text-info"><i class="fab fa-facebook fa-lg"></i></a></li>
+                    <li><a href="https://www.instagram.com/kcg_official1?utm_source=qr" target="_blank" class="text-info"><i class="fab fa-instagram fa-lg"></i></a></li>
+                    <li><a href="https://t.me/KCG01Africa" target="_blank" class="text-info"><i class="fab fa-telegram fa-lg"></i></a></li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-3 mb-4">
-          <h6>Services</h6>
-          <ul class="list-unstyled">
-            <li>Futures Signals</li>
-            <li>Crypto Signals</li>
-            <li>Forex & Stocks</li>
-            <li>Meme Coin Analysis</li>
-          </ul>
-        </div>
-        <div class="col-md-2 mb-4">
-          <h6>Affiliates</h6>
-          <ul class="list-unstyled">
-            <li>Broker Partners</li>
-            <li>Prop Firm Program</li>
-            <li>Ambassador</li>
-          </ul>
-        </div>
-        <div class="col-md-2 mb-4">
-          <h6>Social</h6>
-          <ul class="list-unstyled d-flex gap-3">
-            <li><a href="#" class="text-info"><i class="fab fa-youtube fa-lg"></i></a></li>
-            <li><a href="#" class="text-info"><i class="fab fa-instagram fa-lg"></i></a></li>
-            <li><a href="#" class="text-info"><i class="fab fa-telegram fa-lg"></i></a></li>
-          </ul>
-        </div>
-      </div>
-      <hr>
-      <div class="text-center text-secondary small">All trading involves risk. Our signal service is a
-        subscription-based educational tool — not financial advice.</div>
+        <hr class="opacity-25">
+        <div class="text-center text-secondary small">All trading involves risk. Our signal service is a subscription-based educational tool — not financial advice.</div>
     </div>
-  </footer>
+</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // ========== SUPABASE CREDENTIALS (Replace with env vars for Netlify) ==========
+<!-- ─── SCRIPTS ─── -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+    // ─── Supabase ───
     const SUPABASE_URL = 'https://ayeobjoaxxcvlccpzxic.supabase.co';
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_2nvoZ7z1G9hePh5NJse5uA_9oBQoBcf';
-
-    let supabaseClient;
+    const { createClient } = window.supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
     let currentUser = null;
 
-    // Initialize Supabase client
-    // The Supabase CDN exposes the library as window.supabase.
-    // We store the client as supabaseClient so we do not overwrite the library object.
-    const { createClient } = window.supabase;
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-    // DOM elements
+    // ─── DOM refs ───
     const authModalEl = document.getElementById('authModal');
     const authModal = new bootstrap.Modal(authModalEl);
     const authForm = document.getElementById('authForm');
@@ -665,175 +1310,389 @@
     const authModeText = document.getElementById('authModeText');
     const toggleAuthMode = document.getElementById('toggleAuthMode');
     const authError = document.getElementById('authError');
-    let isLoginMode = true;
-
     const authButtonsDiv = document.getElementById('authButtons');
     const userInfoDiv = document.getElementById('userInfo');
     const userEmailDisplay = document.getElementById('userEmailDisplay');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    let isLoginMode = true;
 
-    // Get navbar buttons
-    const loginNavBtn = document.getElementById('loginNavBtn');
-    const signupNavBtn = document.getElementById('signupNavBtn');
-
-    // Set modal mode when Login is clicked
-    if (loginNavBtn) {
-      loginNavBtn.addEventListener('click', () => {
-        if (!isLoginMode) {
-          isLoginMode = true;
-          authModeText.innerText = 'Login';
-          authSubmitBtn.innerText = 'Login';
-          toggleAuthMode.innerText = 'Need an account? Sign up';
-        }
-        authError.innerText = '';
-      });
+    // ─── Toast ───
+    function showToast(msg) {
+        const el = document.getElementById('liveToast');
+        document.getElementById('toastMsg').innerText = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3000);
     }
 
-    // Set modal mode when Sign Up is clicked
-    if (signupNavBtn) {
-      signupNavBtn.addEventListener('click', () => {
-        if (isLoginMode) {
-          isLoginMode = false;
-          authModeText.innerText = 'Sign Up';
-          authSubmitBtn.innerText = 'Sign Up';
-          toggleAuthMode.innerText = 'Already have an account? Login';
-        }
-        authError.innerText = '';
-      });
-    }
-
-    function updateUIBasedOnUser(user) {
-      currentUser = user;
-      if (user) {
-        authButtonsDiv.classList.add('d-none');
-        userInfoDiv.classList.remove('d-none');
-        userEmailDisplay.innerText = user.email.split('@')[0] || user.email;
-      } else {
-        authButtonsDiv.classList.remove('d-none');
-        userInfoDiv.classList.add('d-none');
-      }
-    }
-
-    toggleAuthMode.addEventListener('click', (e) => {
-      e.preventDefault();
-      isLoginMode = !isLoginMode;
-      if (isLoginMode) {
-        authModeText.innerText = 'Login';
-        authSubmitBtn.innerText = 'Login';
-        toggleAuthMode.innerText = 'Need an account? Sign up';
-      } else {
-        authModeText.innerText = 'Sign Up';
-        authSubmitBtn.innerText = 'Sign Up';
-        toggleAuthMode.innerText = 'Already have an account? Login';
-      }
-      authError.innerText = '';
-    });
-
-    authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email = authEmail.value.trim();
-      const password = authPassword.value;
-
-      if (!email || !password) {
-        authError.innerText = 'Email and password are required.';
-        return;
-      }
-
-      authError.innerText = '';
-      authSubmitBtn.disabled = true;
-      authSubmitBtn.innerText = isLoginMode ? 'Logging in...' : 'Creating account...';
-
-      try {
-        let result;
-
-        if (isLoginMode) {
-          result = await supabaseClient.auth.signInWithPassword({ email, password });
+    // ─── UI update ───
+    function updateUI(user) {
+        currentUser = user;
+        if (user) {
+            authButtonsDiv.classList.add('d-none');
+            userInfoDiv.classList.remove('d-none');
+            userEmailDisplay.innerText = user.email.split('@')[0];
         } else {
-          result = await supabaseClient.auth.signUp({
-            email,
-            password,
-            options: {
-              emailRedirectTo: window.location.origin
-            }
-          });
+            authButtonsDiv.classList.remove('d-none');
+            userInfoDiv.classList.add('d-none');
         }
-
-        if (result.error) throw result.error;
-
-        if (!isLoginMode && result.data.user && result.data.session === null) {
-          authError.innerText = 'Signup successful. Please check your email to confirm your account, then log in.';
-          isLoginMode = true;
-          authModeText.innerText = 'Login';
-          authSubmitBtn.innerText = 'Login';
-          toggleAuthMode.innerText = 'Need an account? Sign up';
-          authPassword.value = '';
-        } else if (result.data.user || result.data.session?.user) {
-          authModal.hide();
-          authForm.reset();
-          updateUIBasedOnUser(result.data.user || result.data.session.user);
-        }
-      } catch (err) {
-        authError.innerText = err.message || 'Authentication failed.';
-      } finally {
-        authSubmitBtn.disabled = false;
-        authSubmitBtn.innerText = isLoginMode ? 'Login' : 'Sign Up';
-      }
-    });
-
-    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-      await supabaseClient.auth.signOut();
-      updateUIBasedOnUser(null);
-    });
-
-    async function checkSession() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session?.user) updateUIBasedOnUser(session.user);
     }
-    checkSession();
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (session?.user) updateUIBasedOnUser(session.user);
-      else updateUIBasedOnUser(null);
+    // ─── Password strength ───
+    function checkStrength(pw) {
+        if (!pw || isLoginMode) {
+            strengthBar.style.width = '0%';
+            strengthText.innerText = '';
+            return;
+        }
+        let s = 0;
+        if (pw.length >= 6) s += 25;
+        if (/[A-Z]/.test(pw)) s += 25;
+        if (/[0-9]/.test(pw)) s += 25;
+        if (/[^A-Za-z0-9]/.test(pw)) s += 25;
+        strengthBar.style.width = s + '%';
+        strengthBar.style.background = s < 30 ? '#ff4d6d' : s < 70 ? '#ffb347' : '#00ffb3';
+        strengthText.innerText = s < 30 ? 'Weak' : s < 70 ? 'Medium' : 'Strong';
+    }
+
+    authPassword.addEventListener('input', (e) => checkStrength(e.target.value));
+
+    // ─── Toggle auth mode ───
+    toggleAuthMode.addEventListener('click', (e) => {
+        e.preventDefault();
+        isLoginMode = !isLoginMode;
+        authModeText.innerText = isLoginMode ? 'Login' : 'Sign Up';
+        authSubmitBtn.innerText = isLoginMode ? 'Login' : 'Sign Up';
+        toggleAuthMode.innerText = isLoginMode ? 'Need an account? Sign up' : 'Already have an account? Login';
+        authError.innerText = '';
+        if (!isLoginMode) checkStrength(authPassword.value);
+        else { strengthBar.style.width = '0%';
+            strengthText.innerText = ''; }
     });
 
-    // Protect subscription buttons
-    const subscribeBtns = document.querySelectorAll('.subscribe-demo');
-    subscribeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    // ─── Login / Signup ───
+    authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!currentUser) {
-          alert("🔐 Please login or sign up first to subscribe to signals.");
-          authModal.show();
-          return;
+        const email = authEmail.value.trim();
+        const password = authPassword.value;
+        if (!email || !password) {
+            authError.innerText = 'Email and password are required.';
+            return;
         }
-        alert(`✅ Welcome ${currentUser.email}! Your ${btn.getAttribute('data-plan') === 'elite' ? 'Pro Elite' : 'Starter'} signal subscription demo would proceed to payment gateway.`);
-      });
+        authError.innerText = '';
+        authSubmitBtn.disabled = true;
+        authSubmitBtn.innerText = isLoginMode ? 'Logging in...' : 'Creating...';
+        try {
+            let result;
+            if (isLoginMode) {
+                result = await supabaseClient.auth.signInWithPassword({ email, password });
+            } else {
+                result = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: { emailRedirectTo: window.location.origin }
+                });
+            }
+            if (result.error) throw result.error;
+            if (!isLoginMode && result.data.user && !result.data.session) {
+                authError.innerText = 'Signup successful! Confirm your email then log in.';
+                isLoginMode = true;
+                authModeText.innerText = 'Login';
+                authSubmitBtn.innerText = 'Login';
+                toggleAuthMode.innerText = 'Need an account? Sign up';
+                authPassword.value = '';
+                strengthBar.style.width = '0%';
+            } else if (result.data.user || result.data.session?.user) {
+                authModal.hide();
+                authForm.reset();
+                updateUI(result.data.user || result.data.session.user);
+                showToast(`Welcome ${email.split('@')[0]} 🚀`);
+            }
+        } catch (err) {
+            authError.innerText = err.message;
+        } finally {
+            authSubmitBtn.disabled = false;
+            authSubmitBtn.innerText = isLoginMode ? 'Login' : 'Sign Up';
+        }
+    });
+
+    // ─── Logout ───
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+        updateUI(null);
+        showToast('Logged out');
+    });
+
+    // ─── Session check ───
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) updateUI(session.user);
+    });
+    supabaseClient.auth.onAuthStateChange((_, session) => {
+        updateUI(session?.user || null);
+    });
+
+    // ─── Interactive handlers ───
+    document.querySelectorAll('.subscribe-demo').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast('🔐 Please login to subscribe');
+                authModal.show();
+                return;
+            }
+            const plan = btn.getAttribute('data-plan');
+            let msg = '';
+            if (plan === 'competition') {
+                msg = `✅ ${currentUser.email} — Competition Offer (K250) applied!`;
+            } else if (plan === 'elite') {
+                msg = `✅ ${currentUser.email} — Pro Elite plan → payment gateway`;
+            } else {
+                msg = `✅ ${currentUser.email} — Starter plan → payment gateway`;
+            }
+            showToast(msg);
+        });
     });
 
     document.querySelectorAll('.affiliate-join-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (!currentUser) { alert("Login required to join affiliate program."); authModal.show(); return; }
-        alert("🚀 Affiliate Program Demo: Your referral dashboard is ready.");
-      });
+        btn.addEventListener('click', () => {
+            if (!currentUser) {
+                showToast('Login required for affiliate');
+                authModal.show();
+                return;
+            }
+            showToast('🚀 Affiliate dashboard ready — share your link!');
+        });
     });
 
-    const joinCommunityBtn = document.querySelector('.join-community-demo');
-    if (joinCommunityBtn) {
-      joinCommunityBtn.addEventListener('click', () => {
-        if (!currentUser) { alert("Join our community after logging in!"); authModal.show(); return; }
-        alert("🌐 Welcome to our Discord community hub! (Logged in as " + currentUser.email + ")");
-      });
+    document.querySelector('.join-community-demo')?.addEventListener('click', () => {
+        if (!currentUser) {
+            showToast('Join community after login');
+            authModal.show();
+            return;
+        }
+        showToast('🌐 Welcome to our Discord hub!');
+    });
+
+    // ─── Smooth scroll ───
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const id = this.getAttribute('href');
+            if (id === '#') return;
+            const target = document.querySelector(id);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ─── Navbar scroll effect ───
+    window.addEventListener('scroll', () => {
+        document.getElementById('mainNavbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ─── REAL-TIME TICKER with WebSocket + REST fallback ───
+    // Define symbols
+    const tickerSymbols = [
+        { display: 'BTC/USD', symbol: 'BTCUSDT', price: 0, change: '0.00%' },
+        { display: 'ETH/USD', symbol: 'ETHUSDT', price: 0, change: '0.00%' },
+        { display: 'SOL/USD', symbol: 'SOLUSDT', price: 0, change: '0.00%' },
+        { display: 'DOGE/USD', symbol: 'DOGEUSDT', price: 0, change: '0.00%' },
+        // Static fallback for non-crypto
+        { display: 'ES_F', price: 5125, change: '-0.3%' },
+        { display: 'XAU/USD', price: 2390, change: '+0.7%' },
+        { display: 'EUR/USD', price: 1.0892, change: '+0.15%' },
+        { display: 'SPY', price: 523.4, change: '-0.2%' }
+    ];
+
+    // Map for quick updates
+    const symbolMap = {};
+    tickerSymbols.forEach((s, idx) => {
+        if (s.symbol) symbolMap[s.symbol] = idx;
+    });
+
+    // DOM elements
+    const tickerContainer = document.getElementById('marketTicker');
+    const liveIndicator = document.getElementById('liveIndicator');
+    const liveStatus = document.getElementById('liveStatus');
+
+    // Build ticker
+    function buildTicker() {
+        let html = '';
+        for (let rep = 0; rep < 3; rep++) {
+            tickerSymbols.forEach(s => {
+                const up = s.change.startsWith('+') || (s.change !== '0.00%' && !s.change.startsWith('-'));
+                let priceStr = '';
+                if (typeof s.price === 'number') {
+                    priceStr = s.price.toFixed(s.price < 1 ? 6 : 2);
+                } else {
+                    priceStr = s.price;
+                }
+                html += `<div class="ticker-item">
+                            <span class="fw-bold">${s.display}</span>
+                            <span class="${up ? 'price-up' : 'price-down'}">${priceStr}</span>
+                            <small>${s.change}</small>
+                        </div>`;
+            });
+        }
+        tickerContainer.innerHTML = html;
     }
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        const target = document.querySelector(targetId);
-        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-      });
+    // Fetch from Binance REST API (fallback)
+    async function fetchBinanceREST() {
+        const symbols = Object.keys(symbolMap);
+        if (symbols.length === 0) return;
+        try {
+            // Use 24hr ticker endpoint for all symbols at once
+            const url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=' + JSON.stringify(symbols);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('REST API error');
+            const data = await response.json();
+            data.forEach(item => {
+                const idx = symbolMap[item.symbol];
+                if (idx !== undefined) {
+                    const price = parseFloat(item.lastPrice);
+                    const change = parseFloat(item.priceChangePercent);
+                    tickerSymbols[idx].price = price;
+                    tickerSymbols[idx].change = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+                }
+            });
+            buildTicker();
+            liveIndicator.className = 'live-indicator on';
+            liveStatus.textContent = 'Live (REST)';
+        } catch (e) {
+            console.warn('REST fallback failed:', e);
+            liveIndicator.className = 'live-indicator';
+            liveStatus.textContent = 'Offline';
+        }
+    }
+
+    // WebSocket
+    let ws = null;
+    let reconnectAttempts = 0;
+    const maxReconnect = 5;
+    let restInterval = null;
+    let wsReady = false;
+
+    function connectWebSocket() {
+        const streams = Object.keys(symbolMap).map(s => s.toLowerCase() + '@ticker');
+        const wsUrl = `wss://stream.binance.com:9443/stream?streams=${streams.join('/')}`;
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+            console.log('Binance WebSocket connected');
+            reconnectAttempts = 0;
+            wsReady = true;
+            liveIndicator.className = 'live-indicator on';
+            liveStatus.textContent = 'Live (WS)';
+            // If we had REST fallback, clear it
+            if (restInterval) {
+                clearInterval(restInterval);
+                restInterval = null;
+            }
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.data && data.stream) {
+                    const streamName = data.stream;
+                    const symbol = streamName.split('@')[0].toUpperCase();
+                    const idx = symbolMap[symbol];
+                    if (idx !== undefined) {
+                        const ticker = data.data;
+                        const price = parseFloat(ticker.c);
+                        const change = parseFloat(ticker.P);
+                        tickerSymbols[idx].price = price;
+                        tickerSymbols[idx].change = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+                        buildTicker();
+                    }
+                }
+            } catch (e) {
+                console.warn('WS parse error', e);
+            }
+        };
+
+        ws.onerror = (err) => {
+            console.warn('WebSocket error', err);
+            wsReady = false;
+            liveIndicator.className = 'live-indicator';
+            liveStatus.textContent = 'Connecting...';
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket closed');
+            wsReady = false;
+            liveIndicator.className = 'live-indicator';
+            liveStatus.textContent = 'Reconnecting...';
+            // Start REST fallback if not already
+            if (!restInterval) {
+                restInterval = setInterval(fetchBinanceREST, 10000);
+                fetchBinanceREST(); // immediate
+            }
+            if (reconnectAttempts < maxReconnect) {
+                reconnectAttempts++;
+                setTimeout(connectWebSocket, 3000);
+            } else {
+                liveStatus.textContent = 'REST fallback';
+            }
+        };
+    }
+
+    // Initial data fetch via REST, then start WebSocket
+    async function initTicker() {
+        // First try REST to get initial data
+        await fetchBinanceREST();
+        // Then attempt WebSocket
+        connectWebSocket();
+        // Also set a REST interval as safety (will be cleared if WS connects)
+        if (!restInterval) {
+            restInterval = setInterval(fetchBinanceREST, 15000);
+        }
+    }
+
+    initTicker();
+
+    // ─── Countdown Timer ───
+    function updateCountdown() {
+        const end = new Date('2026-09-30T23:59:59').getTime();
+        const now = Date.now();
+        let diff = end - now;
+        if (diff < 0) diff = 0;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        document.getElementById('countdownDays').textContent = String(days).padStart(2, '0');
+        document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('countdownMinutes').textContent = String(mins).padStart(2, '0');
+        document.getElementById('countdownSeconds').textContent = String(secs).padStart(2, '0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ─── Navbar login/signup button handlers ───
+    document.getElementById('loginNavBtn')?.addEventListener('click', () => {
+        if (!isLoginMode) {
+            isLoginMode = true;
+            authModeText.innerText = 'Login';
+            authSubmitBtn.innerText = 'Login';
+            toggleAuthMode.innerText = 'Need an account? Sign up';
+        }
+        authError.innerText = '';
     });
-  </script>
+
+    document.getElementById('signupNavBtn')?.addEventListener('click', () => {
+        if (isLoginMode) {
+            isLoginMode = false;
+            authModeText.innerText = 'Sign Up';
+            authSubmitBtn.innerText = 'Sign Up';
+            toggleAuthMode.innerText = 'Already have an account? Login';
+        }
+        authError.innerText = '';
+    });
+</script>
 </body>
 
 </html>
