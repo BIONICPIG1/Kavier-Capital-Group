@@ -39,9 +39,11 @@
         ::-webkit-scrollbar {
             width: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #0f1220;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #0ff;
             border-radius: 8px;
@@ -325,6 +327,7 @@
         .price-up {
             color: #00ffb3;
         }
+
         .price-down {
             color: #ff4d6d;
         }
@@ -333,6 +336,7 @@
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(-50%);
             }
@@ -348,14 +352,26 @@
             margin-right: 6px;
             animation: pulse 1.5s ease-in-out infinite;
         }
+
         .live-indicator.on {
             background: #00ffb3;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* ── Hero ── */
@@ -444,10 +460,12 @@
         .partner-card .partner-info {
             flex: 1;
         }
+
         .partner-card .partner-info h6 {
             margin: 0;
             font-weight: 700;
         }
+
         .partner-card .partner-info small {
             color: #9aaee5;
         }
@@ -551,113 +569,6 @@
             transform: translateX(0);
         }
 
-        /* ── Competition / VS Badge ── */
-        .vs-badge {
-            font-size: 3.8rem;
-            font-weight: 900;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            animation: vsPulse 2.2s ease-in-out infinite;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 0.2rem 1.2rem;
-            border-radius: 60px;
-            border: 2px solid #0ff;
-            backdrop-filter: blur(8px);
-            line-height: 1.4;
-            display: inline-block;
-        }
-
-        @keyframes vsPulse {
-            0% { transform: scale(1); text-shadow: 0 0 20px #0ff, 0 0 40px #0072ff; }
-            50% { transform: scale(1.08); text-shadow: 0 0 40px #0ff, 0 0 80px #0072ff, 0 0 120px #00c6ff; }
-            100% { transform: scale(1); text-shadow: 0 0 20px #0ff, 0 0 40px #0072ff; }
-        }
-
-        .competition-card {
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            transition: 0.3s;
-        }
-        .competition-card:hover {
-            border-color: #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
-        }
-
-        .price-drop {
-            background: rgba(255, 77, 109, 0.12);
-            border: 2px dashed #ff4d6d;
-            border-radius: 2rem;
-            padding: 1.5rem;
-        }
-
-        /* ── Countdown ── */
-        .countdown-box {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 1.5rem;
-            padding: 1rem 1.5rem;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            display: inline-flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .countdown-item {
-            text-align: center;
-            min-width: 60px;
-        }
-        .countdown-item .number {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #0ff;
-            line-height: 1;
-        }
-        .countdown-item .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: #9aaee5;
-            letter-spacing: 0.1em;
-        }
-
-        /* ── Leaderboard ── */
-        .leaderboard-entry {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: 0.2s;
-        }
-        .leaderboard-entry:hover {
-            background: rgba(0, 255, 255, 0.05);
-            border-radius: 0.8rem;
-        }
-        .leaderboard-rank {
-            font-weight: 800;
-            color: #0ff;
-            width: 30px;
-            text-align: center;
-        }
-        .leaderboard-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(0, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #0ff;
-        }
-        .leaderboard-name {
-            flex: 1;
-            font-weight: 500;
-        }
-        .leaderboard-profit {
-            color: #00ffb3;
-            font-weight: 700;
-        }
-        .leaderboard-profit.negative {
-            color: #ff4d6d;
-        }
-
         /* ── Testimonials ── */
         .testimonial-card {
             background: rgba(255, 255, 255, 0.03);
@@ -666,28 +577,84 @@
             border: 1px solid rgba(0, 255, 255, 0.1);
             transition: 0.3s;
         }
+
         .testimonial-card:hover {
             border-color: #0ff;
             transform: translateY(-4px);
         }
+
         .testimonial-card .stars {
             color: #ffd700;
             letter-spacing: 2px;
         }
 
-        /* ── Comparison Table ── */
-        .comparison-table th {
-            color: #0ff;
-            font-weight: 600;
-            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        /* ── Single Offer Card ── */
+        .single-offer-card {
+            max-width: 480px;
+            margin: 0 auto;
+            border-top: 3px solid #0ff;
+            background: rgba(12, 16, 28, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            padding: 2.5rem 2rem;
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            overflow: hidden;
         }
-        .comparison-table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 0.8rem 0.5rem;
+
+        .single-offer-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #0ff, #0072ff, #c9974e, #0ff);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.45s;
+            z-index: -1;
+            background-size: 300% 300%;
         }
-        .comparison-table .highlight {
+
+        .single-offer-card:hover::before {
+            opacity: 0.20;
+        }
+
+        .single-offer-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 30px 50px -16px rgba(0, 255, 255, 0.22);
+        }
+
+        .single-offer-card .offer-price {
+            font-size: 4rem;
+            font-weight: 800;
             color: #0ff;
-            font-weight: 600;
+            line-height: 1;
+        }
+
+        .single-offer-card .offer-price small {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #9aaee5;
+        }
+
+        .single-offer-card .offer-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .single-offer-card .offer-features li:last-child {
+            border-bottom: none;
+        }
+
+        .single-offer-card .offer-features i {
+            color: #0ff;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
         }
 
         /* ── Responsive ── */
@@ -696,40 +663,45 @@
                 width: 38px;
                 height: 38px;
             }
+
             .brand-text-main {
                 font-size: 0.85rem;
             }
+
             .brand-text-sub {
                 font-size: 0.55rem;
             }
+
             .navbar .container {
                 gap: 0.3rem;
             }
+
             .hero-logo-card {
                 max-width: 280px;
             }
+
             .social-icon-circle {
                 width: 58px;
                 height: 58px;
                 font-size: 1.5rem;
             }
+
             .partner-card {
                 flex-direction: column;
                 text-align: center;
             }
+
             .partner-card .partner-icon {
                 width: 48px;
                 height: 48px;
             }
-            .vs-badge {
-                font-size: 2.8rem;
-                padding: 0.1rem 0.8rem;
+
+            .single-offer-card {
+                padding: 1.8rem 1.2rem;
             }
-            .countdown-box {
-                gap: 0.8rem;
-            }
-            .countdown-item .number {
-                font-size: 1.6rem;
+
+            .single-offer-card .offer-price {
+                font-size: 3rem;
             }
         }
 
@@ -737,6 +709,7 @@
             .navbar-nav {
                 padding: 0.5rem 0;
             }
+
             .navbar-nav .nav-link {
                 padding: 0.4rem 0.8rem;
             }
