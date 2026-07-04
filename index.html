@@ -12,11 +12,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
     <link
-    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Supabase JS library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <style>
+
+    </style>
 </head>
 
 <body>
@@ -38,31 +42,30 @@
                 </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1 gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#markets">Markets</a></li>
-                <li class="nav-item"><a class="nav-link" href="#competition">Competition</a></li>
-                <li class="nav-item"><a class="nav-link" href="#signals">Signals</a></li>
-                <li class="nav-item"><a class="nav-link" href="#affiliates">Affiliates</a></li>
-                <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
-            </ul>
-            <div class="d-flex align-items-center ms-3 gap-2" id="authButtons">
-                <button class="btn btn-outline-cyber btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
-                id="loginNavBtn">Login</button>
-                <button class="btn btn-glow btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
-                id="signupNavBtn">Sign Up</button>
-            </div>
-            <div class="d-flex align-items-center ms-3 gap-2 d-none" id="userInfo">
-                <span class="text-light small fw-semibold" id="userEmailDisplay"></span>
-                <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-astronaut text-info"></i>
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1 gap-lg-2">
+                    <li class="nav-item"><a class="nav-link" href="#markets">Markets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#signals">Signals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#affiliates">Affiliates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
+                </ul>
+                <div class="d-flex align-items-center ms-3 gap-2" id="authButtons">
+                    <button class="btn btn-outline-cyber btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
+                        id="loginNavBtn">Login</button>
+                    <button class="btn btn-glow btn-sm" data-bs-toggle="modal" data-bs-target="#authModal"
+                        id="signupNavBtn">Sign Up</button>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-cyber dropdown-menu-end">
-                    <li><a class="dropdown-item dropdown-item-cyber" href="#" id="logoutBtn"><i
-                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                <div class="d-flex align-items-center ms-3 gap-2 d-none" id="userInfo">
+                    <span class="text-light small fw-semibold" id="userEmailDisplay"></span>
+                    <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-astronaut text-info"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-cyber dropdown-menu-end">
+                        <li><a class="dropdown-item dropdown-item-cyber" href="#" id="logoutBtn"><i
+                                    class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -86,16 +89,16 @@
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
                     <span class="badge-cyber d-inline-block mb-2"><i class="fas fa-bolt"></i> LIVE INTELLIGENCE • 360°
-                    MARKETS</span>
+                        MARKETS</span>
                     <h1 class="display-3 fw-bold mt-3">Trade the <span class="text-info neon-text">universe</span> of
-                    finance</h1>
+                        finance</h1>
                     <p class="lead fs-4 opacity-75">Futures • Crypto • Forex • Stocks • Meme Coins — institutional-grade
                         signals & AI-driven analytics.</p>
                     <div class="d-flex flex-wrap gap-3 mt-4">
                         <a href="#signals" class="btn btn-glow btn-lg"><i class="fas fa-bell"></i> Subscribe to
-                        Signals</a>
+                            Signals</a>
                         <a href="#markets" class="btn btn-outline-cyber btn-lg"><i class="fas fa-globe"></i> Explore
-                        Markets</a>
+                            Markets</a>
                     </div>
                     <div class="mt-5 d-flex gap-4 flex-wrap hero-stats">
                         <div><i class="fas fa-chart-simple text-info"></i> <strong>+12,400</strong> signals delivered
@@ -122,7 +125,7 @@
     <section id="markets" class="container py-5">
         <div class="text-center mb-5">
             <h2 class="display-5 fw-bold"><span class="border-bottom border-info border-3 pb-2">5 markets, limitless
-                possibilities</span></h2>
+                    possibilities</span></h2>
             <p class="fs-5 mt-3 opacity-75">From indices to meme coins — comprehensive infrastructure &amp; signals.</p>
         </div>
         <div class="row g-4">
@@ -164,91 +167,7 @@
         </div>
     </section>
 
-    <!-- ─── COMPETITION ─── -->
-    <section id="competition" class="container py-5">
-        <div class="glass-card p-4 p-xl-5">
-            <div class="text-center mb-4">
-                <span class="badge-cyber"><i class="fas fa-trophy"></i> WINNTER SHOWDOWN 2026</span>
-                <h2 class="display-5 fw-bold mt-2">Kavier Capital <span class="text-info">vs</span> Fidelis Forex Sniper</h2>
-                <p class="fs-5 opacity-75">July – September • Who will dominate the markets?</p>
-            </div>
-
-            <!-- Countdown Timer -->
-            <div class="text-center mb-4">
-                <div class="countdown-box" id="countdownContainer">
-                    <div class="countdown-item">
-                        <div class="number" id="countdownDays">00</div>
-                        <div class="label">Days</div>
-                    </div>
-                    <div class="countdown-item">
-                        <div class="number" id="countdownHours">00</div>
-                        <div class="label">Hours</div>
-                    </div>
-                    <div class="countdown-item">
-                        <div class="number" id="countdownMinutes">00</div>
-                        <div class="label">Minutes</div>
-                    </div>
-                    <div class="countdown-item">
-                        <div class="number" id="countdownSeconds">00</div>
-                        <div class="label">Seconds</div>
-                    </div>
-                </div>
-                <small class="text-secondary">⏳ Until the competition ends</small>
-            </div>
-
-            <!-- Versus Grid -->
-            <div class="row g-4 align-items-stretch">
-                <div class="col-md-5">
-                    <div class="glass-card p-4 h-100 text-center competition-card" style="border-color: rgba(0, 255, 255, 0.5);">
-                        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                            <h3 class="text-info mb-0">Kavier Capital</h3>
-                        </div>
-                        <ul class="list-unstyled text-start mt-3">
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 24/7 multi-market coverage</li>
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Institutional order flow</li>
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Risk-managed frameworks</li>
-                        </ul>
-                        <div class="mt-3 small text-info">🔥 Current leader in win-rate</div>
-                    </div>
-                </div>
-                <div class="col-md-2 d-flex align-items-center justify-content-center my-4 my-md-0">
-                    <span class="vs-badge">VS</span>
-                </div>
-                <div class="col-md-5">
-                    <div class="glass-card p-4 h-100 text-center competition-card" style="border-color: rgba(255, 200, 0, 0.4);">
-                        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                            <h3 style="color: #ffd700;">Fidelis Forex</h3>
-                        </div>
-                        <ul class="list-unstyled text-start mt-3">
-                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> High-risk momentum plays</li>
-                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> Aggressive growth strategies</li>
-                            <li class="mb-2"><i class="fas fa-bullseye text-warning me-2"></i> Niche market exploiting</li>
-                        </ul>
-                        <div class="mt-3 small text-warning">⚡ Known for explosive moves</div>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Price Promotion -->
-            <div class="row mt-5">
-                <div class="col-12">
-                    <div class="price-drop text-center">
-                        <h3 class="fw-bold">🚀 Special Winnter Competition Price</h3>
-                        <p class="fs-2 mb-2">
-                            <span style="text-decoration: line-through; color: #ff4d6d; font-size: 2rem;">K 450</span>
-                            <span class="text-info fw-bold display-5"> K 250</span>
-                            <span class="badge bg-danger ms-3" style="font-size: 1rem;">Limited Time</span>
-                        </p>
-                        <p class="opacity-75">Secure your spot in the Kavier Capital vs Sniper Fedix battle.<br>Exclusive offer valid <strong>June – September</strong>.</p>
-                        <button class="btn btn-glow btn-lg subscribe-demo" data-plan="competition">Claim K250 Offer <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ─── SIGNALS ─── -->
+    <!-- ─── SIGNALS (SINGLE OFFER: K450) ─── -->
     <section id="signals" class="container py-5">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6">
@@ -261,310 +180,375 @@
                     <li><i class="fas fa-check-circle text-info me-2"></i> Real-time entry/exit alerts</li>
                     <li><i class="fas fa-check-circle text-info me-2"></i> Custom risk-to-reward guidance</li>
                     <li><i class="fas fa-check-circle text-info me-2"></i> Educational webinars &amp; recaps</li>
+                    <li><i class="fas fa-check-circle text-info me-2"></i> All markets: Futures, Crypto, Forex, Stocks,
+                        Meme Coins</li>
                 </ul>
             </div>
             <div class="col-lg-6">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="price-card p-4 text-center h-100 glass-card">
-                            <h4>Starter Signal</h4>
-                            <div class="display-6 fw-bold text-info">K150<span style="font-size:1rem">/mo</span></div>
-                            <hr class="bg-secondary opacity-25">
-                            <p>Forex + Stocks &amp; Crypto mix<br>5–8 signals/week</p>
-                            <button class="btn btn-outline-cyber w-100 subscribe-demo" data-plan="starter">Start Trial <i
-                                class="fas fa-arrow-right"></i></button>
+                <div class="single-offer-card">
+                    <div class="text-center mb-3">
+                        <span class="badge bg-info text-dark fw-bold px-3 py-2">🔥 Most Traded</span>
+                    </div>
+                    <h4 class="text-center fw-bold">Pro Elite <span class="text-info">Signal</span></h4>
+                    <div class="text-center my-3">
+                        <span class="offer-price">K450 <small>/mo</small></span>
+                    </div>
+                    <hr class="bg-secondary opacity-25">
+                    <ul class="list-unstyled offer-features mt-3">
+                        <li><i class="fas fa-check-circle"></i> All 5 markets covered</li>
+                        <li><i class="fas fa-check-circle"></i> 15+ high-probability signals/week</li>
+                        <li><i class="fas fa-check-circle"></i> 1:1 Q&amp;A with analysts</li>
+                        <li><i class="fas fa-check-circle"></i> Real-time entry/exit &amp; SL/TP levels</li>
+                        <li><i class="fas fa-check-circle"></i> Telegram &amp; Discord delivery</li>
+                        <li><i class="fas fa-check-circle"></i> Weekly market recaps &amp; webinars</li>
+                    </ul>
+                    <button class="btn btn-glow w-100 mt-4 subscribe-demo" data-plan="elite">Join Elite <i
+                            class="fas fa-gem"></i></button>
+                    <p class="text-center text-secondary small mt-3">Cancel anytime · 7-day free trial</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signal Feed Demo -->
+        <div class="glass-card p-4 mt-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="fas fa-waveform text-info"></i>
+                <span class="fw-bold">Latest Signal Alerts</span>
+                <span class="badge bg-success ms-2">Live</span>
+            </div>
+            <div class="signal-feed" id="signalFeed" style="max-height:280px;overflow-y:auto;">
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2"
+                    style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                    <span><i class="fas fa-arrow-up text-success"></i> BTCUSD LONG</span>
+                    <span>Entry: 68420 | TP: 69200</span>
+                    <span class="text-info small">🔥 2h ago</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2"
+                    style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                    <span><i class="fas fa-arrow-down text-danger"></i> ES Futures SHORT</span>
+                    <span>Entry: 5125 | SL: 5145</span>
+                    <span class="text-info small">4h ago</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2"
+                    style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                    <span><i class="fas fa-arrow-up text-success"></i> PEPE/USDT</span>
+                    <span>Entry: 0.0000123 | TP: 0.000014</span>
+                    <span class="text-info small">6h ago</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2"
+                    style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                    <span><i class="fas fa-arrow-up text-success"></i> XAU/USD LONG</span>
+                    <span>Entry: 2390 | TP: 2415</span>
+                    <span class="text-info small">8h ago</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2"
+                    style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
+                    <span><i class="fas fa-arrow-down text-danger"></i> EUR/USD SHORT</span>
+                    <span>Entry: 1.0892 | SL: 1.0915</span>
+                    <span class="text-info small">10h ago</span>
+                </div>
+            </div>
+            <div class="text-center mt-2"><small class="text-secondary">*Past signals demo — real-time after
+                    subscription</small></div>
+        </div>
+    </section>
+
+    <!-- ─── AFFILIATES ─── -->
+    <section id="affiliates" class="container py-5">
+        <div class="glass-card p-4 p-xl-5">
+            <div class="text-center mb-4">
+                <h2 class="display-5 fw-bold"><i class="fas fa-handshake text-info"></i> Affiliate &amp; Partnership
+                    Network</h2>
+                <p class="fs-5 opacity-75">Earn generous commissions by referring traders to top-tier brokers &amp; prop
+                    firms.</p>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-lg-4">
+                    <a href="https://app.equityedge.io/signup/KAVIER/" target="_blank" rel="noopener"
+                        class="partner-card">
+                        <div class="partner-icon"><i class="fas fa-chart-pie"></i></div>
+                        <div class="partner-info">
+                            <h6>EquityEdge</h6>
+                            <small>Premium trading signals &amp; analytics</small>
+                        </div>
+                        <i class="fas fa-arrow-right text-info opacity-50"></i>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a href="https://one.exnessonelink.com/a/5kfa8vx566?source=app&platform=mobile&pid=mobile_share"
+                        target="_blank" rel="noopener" class="partner-card">
+                        <div class="partner-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <div class="partner-info">
+                            <h6>Exness</h6>
+                            <small>Global forex &amp; CFD broker</small>
+                        </div>
+                        <i class="fas fa-arrow-right text-info opacity-50"></i>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <a href="https://one.justmarkets.link/a/trejnc0v5q" target="_blank" rel="noopener"
+                        class="partner-card">
+                        <div class="partner-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="partner-info">
+                            <h6>JustMarkets</h6>
+                            <small>Multi-asset trading platform</small>
+                        </div>
+                        <i class="fas fa-arrow-right text-info opacity-50"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
+                        <i class="fas fa-chart-simple fa-2x text-info"></i>
+                        <div><strong>Premium Brokers</strong><br>OANDA, Binance, Bybit, Interactive Brokers — up to 40%
+                            revshare.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
+                        <i class="fas fa-trophy fa-2x text-info"></i>
+                        <div><strong>Leading Prop Firms</strong><br>FTMO, MyFundedFutures, The Funded Trader — challenge
+                            discounts &amp; affiliate codes.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-cyber affiliate-join-btn">Become an Affiliate <i
+                        class="fas fa-rocket"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── COMMUNITY ─── -->
+    <section id="community" class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7 text-center">
+                <h2 class="display-5 fw-bold">Connect, Learn &amp; Grow</h2>
+                <p class="opacity-75">Join our vibrant trading community across social platforms. Daily recaps, live
+                    streams, and exclusive signals.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-4 mt-4">
+                    <div class="text-center">
+                        <a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank"
+                            class="social-icon-circle"><i class="fab fa-facebook"></i></a>
+                        <span class="social-label">Facebook</span>
+                    </div>
+                    <div class="text-center">
+                        <a href="https://www.instagram.com/kaviercapitalgroupofficial?igsh=MW02YmpremF2N2g5cA%3D%3D&utm_source=qr"
+                            target="_blank" class="social-icon-circle"><i class="fab fa-instagram"></i></a>
+                        <span class="social-label">Instagram</span>
+                    </div>
+                    <div class="text-center">
+                        <a href="https://chat.whatsapp.com/J0uFPq0zsLHIrd07MXgADo?s=cl&p=i&mlu=1" target="_blank"
+                            class="social-icon-circle"><i class="fab fa-whatsapp"></i></a>
+                        <span class="social-label">Whatsapp</span>
+                    </div>
+                    <div class="text-center">
+                        <a href="https://discord.gg/QsvgBQQHg" target="_blank" class="social-icon-circle"><i
+                                class="fab fa-discord"></i></a>
+                        <span class="social-label">Discord</span>
+                    </div>
+                    <div class="text-center">
+                        <a href="https://t.me/KCG01Africa" target="_blank" class="social-icon-circle"><i
+                                class="fab fa-telegram"></i></a>
+                        <span class="social-label">Telegram</span>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <div class="glass-card p-4">
+                        <i class="fas fa-users fa-3x text-info mb-3"></i>
+                        <h4>12,000+ active traders</h4>
+                        <p>Real-time chat, mentoring &amp; copy-trade insights.</p>
+                        <button class="btn btn-glow join-community-demo">Join Community <i
+                                class="fab fa-discord"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── TESTIMONIALS ─── -->
+    <section class="container py-5">
+        <div class="glass-card p-4 p-xl-5">
+            <h2 class="text-center display-5 fw-bold mb-4">What Our <span class="text-info">Traders Say</span></h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="mt-2">"Kavier signals have been a game changer. I've grown my account 40% in just 2
+                            months."</p>
+                        <div class="d-flex align-items-center gap-2 mt-3">
+                            <div class="leaderboard-avatar" style="width:32px;height:32px;">MT</div>
+                            <div><strong>Mark T.</strong><br><small class="text-secondary">Futures trader</small></div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="price-card p-4 text-center h-100 glass-card"
-                        style="border-top: 3px solid cyan;">
-                        <h4>Pro Elite <span class="badge bg-info text-dark">🔥 most traded</span></h4>
-                        <div class="display-6 fw-bold text-info">k400<span style="font-size:1rem">/mo</span></div>
-                        <hr class="bg-secondary opacity-25">
-                        <p>All markets + Meme Coins • 15+ signals/week • 1:1 Q&amp;A</p>
-                        <button class="btn btn-glow w-100 subscribe-demo" data-plan="elite">Join Elite <i
-                            class="fas fa-gem"></i></button>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="mt-2">"The AI entries are incredibly accurate. I stopped overtrading and started
+                            winning consistently."</p>
+                        <div class="d-flex align-items-center gap-2 mt-3">
+                            <div class="leaderboard-avatar" style="width:32px;height:32px;">SL</div>
+                            <div><strong>Sarah L.</strong><br><small class="text-secondary">Crypto & forex</small></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="mt-2">"Kavier's community is amazing. I've learned so much from the daily recaps and
+                            live streams."</p>
+                        <div class="d-flex align-items-center gap-2 mt-3">
+                            <div class="leaderboard-avatar" style="width:32px;height:32px;">RJ</div>
+                            <div><strong>Ricky J.</strong><br><small class="text-secondary">Swing trader</small></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Signal Feed Demo -->
-    <div class="glass-card p-4 mt-4">
-        <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="fas fa-waveform text-info"></i>
-            <span class="fw-bold">Latest Signal Alerts</span>
-            <span class="badge bg-success ms-2">Live</span>
-        </div>
-        <div class="signal-feed" id="signalFeed" style="max-height:280px;overflow-y:auto;">
-            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
-                <span><i class="fas fa-arrow-up text-success"></i> BTCUSD LONG</span>
-                <span>Entry: 68420 | TP: 69200</span>
-                <span class="text-info small">🔥 2h ago</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
-                <span><i class="fas fa-arrow-down text-danger"></i> ES Futures SHORT</span>
-                <span>Entry: 5125 | SL: 5145</span>
-                <span class="text-info small">4h ago</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-2" style="background:rgba(0,255,255,0.04);border-left:3px solid #0ff;">
-                <span><i class="fas fa-arrow-up text-success"></i> PEPE/USDT</span>
-                <span>Entry: 0.0000123 | TP: 0.000014</span>
-                <span class="text-info small">6h ago</span>
-            </div>
-        </div>
-        <div class="text-center mt-2"><small class="text-secondary">*Past signals demo — real-time after subscription</small></div>
-    </div>
-</section>
+    <!-- ─── RISK DISCLAIMER ─── -->
+    <div class="container mb-4">
+        <div class="risk-badge">
+            <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+            <strong>⚠️ HIGH-RISK DISCLAIMER:</strong> 1. Trading foreign exchange (Forex) on margin carries a high level
+            of risk and may not be suitable for all investors. The high degree of leverage can work against you as well
+            as for you. Before deciding to trade, you should carefully consider your investment objectives, level of
+            experience, and risk appetite.
 
-<!-- ─── AFFILIATES ─── -->
-<section id="affiliates" class="container py-5">
-    <div class="glass-card p-4 p-xl-5">
-        <div class="text-center mb-4">
-            <h2 class="display-5 fw-bold"><i class="fas fa-handshake text-info"></i> Affiliate &amp; Partnership Network</h2>
-            <p class="fs-5 opacity-75">Earn generous commissions by referring traders to top-tier brokers &amp; prop firms.</p>
+            · Loss of Capital: You must be prepared to lose all of the capital you initially deposit. In certain
+            over-the-counter (OTC) margin accounts, your losses can exceed your initial investment, leading to a margin
+            call where you are required to deposit additional funds.
+            · No Guarantees: Past performance does not guarantee future results. Any historical data, backtesting, or
+            hypothetical performance results have inherent limitations and do not represent actual trading.
+            · Not Financial Advice: This content is for educational and informational purposes only. It does not
+            constitute personalized financial, investment, or trading advice. You are solely responsible for your
+            trading decisions.
+            · Market Volatility: Forex markets are influenced by global geopolitical events, central bank policies, and
+            economic data releases, which can cause extreme slippage, gaps, and rapid price movements that may trigger
+            stop-losses at unfavorable levels.
+
+            <br>
+
+            2. Realistic Statistical Probabilities of Profitability
+
+            The industry data is stark. According to comprehensive disclosures required by regulators like the ESMA
+            (European Securities and Markets Authority) and FCA, between 70% and 82% of retail investor accounts lose
+            money trading CFDs and Forex.
+
+            Here is the realistic breakdown of a cohort of 100 new retail forex traders tracked over a 12-month period:
+
+            Outcome Probability Reality Check
+            Total Loss (Blown Account) 30% - 40% These traders lose 90%+ of their initial capital due to
+            over-leveraging, refusing to use stop-losses, or revenge trading.
+            Net Loss (Incremental) 30% - 40% These traders finish the year with a net loss (e.g., -10% to -50%). They
+            have decent strategies but poor risk management or inconsistent discipline.
+            Break-Even (0% ± 5%) 10% - 15% These traders survive but fail to beat a standard high-yield savings account.
+            After accounting for swap fees (overnight interest) and spreads, their net profit is negligible.
+            Profitable (Net Gain) 10% - 15% These traders make money. However, most fall into the 5%–15% annual return
+            bracket, which is lower than a standard stock index fund over the long term.
+            Consistent Alpha (2+ Years) < 5% This is the professional tier. Only 3%–5% of retail traders achieve
+                sustainable profitability year-over-year that outpaces the broader market, often due to proprietary
+                algorithms, institutional execution, or years of psychological conditioning. </div>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-md-6 col-lg-4">
-                <a href="https://app.equityedge.io/signup/KAVIER/" target="_blank" rel="noopener" class="partner-card">
-                    <div class="partner-icon"><i class="fas fa-chart-pie"></i></div>
-                    <div class="partner-info">
-                        <h6>EquityEdge</h6>
-                        <small>Premium trading signals &amp; analytics</small>
+        <!-- ─── AUTH MODAL ─── -->
+        <div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom border-info">
+                        <h5 class="modal-title text-info"><i class="fas fa-user-astronaut"></i> <span
+                                id="authModeText">Login</span></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-                    <i class="fas fa-arrow-right text-info opacity-50"></i>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="https://one.exnessonelink.com/a/5kfa8vx566?source=app&platform=mobile&pid=mobile_share" target="_blank" rel="noopener" class="partner-card">
-                    <div class="partner-icon"><i class="fas fa-exchange-alt"></i></div>
-                    <div class="partner-info">
-                        <h6>Exness</h6>
-                        <small>Global forex &amp; CFD broker</small>
-                    </div>
-                    <i class="fas fa-arrow-right text-info opacity-50"></i>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="https://one.justmarkets.link/a/trejnc0v5q" target="_blank" rel="noopener" class="partner-card">
-                    <div class="partner-icon"><i class="fas fa-chart-bar"></i></div>
-                    <div class="partner-info">
-                        <h6>JustMarkets</h6>
-                        <small>Multi-asset trading platform</small>
-                    </div>
-                    <i class="fas fa-arrow-right text-info opacity-50"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
-                    <i class="fas fa-chart-simple fa-2x text-info"></i>
-                    <div><strong>Premium Brokers</strong><br>OANDA, Binance, Bybit, Interactive Brokers — up to 40% revshare.</div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-3 bg-dark bg-opacity-25 p-3 rounded-4">
-                    <i class="fas fa-trophy fa-2x text-info"></i>
-                    <div><strong>Leading Prop Firms</strong><br>FTMO, MyFundedFutures, The Funded Trader — challenge discounts &amp; affiliate codes.</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-4">
-            <button class="btn btn-outline-cyber affiliate-join-btn">Become an Affiliate <i class="fas fa-rocket"></i></button>
-        </div>
-    </div>
-</section>
-
-<!-- ─── COMMUNITY (FULL WIDTH, NO LEADERBOARD) ─── -->
-<section id="community" class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7 text-center">
-            <h2 class="display-5 fw-bold">Connect, Learn &amp; Grow</h2>
-            <p class="opacity-75">Join our vibrant trading community across social platforms. Daily recaps, live streams, and exclusive signals.</p>
-            <div class="d-flex flex-wrap justify-content-center gap-4 mt-4">
-                <div class="text-center">
-                    <a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank" class="social-icon-circle"><i class="fab fa-facebook"></i></a>
-                    <span class="social-label">Facebook</span>
-                </div>
-                <div class="text-center">
-                    <a href="https://www.instagram.com/kaviercapitalgroupofficial?igsh=MW02YmpremF2N2g5cA%3D%3D&utm_source=qr" target="_blank" class="social-icon-circle"><i class="fab fa-instagram"></i></a>
-                    <span class="social-label">Instagram</span>
-                </div>
-                <div class="text-center">
-                    <a href="https://chat.whatsapp.com/J0uFPq0zsLHIrd07MXgADo?s=cl&p=i&mlu=1" target="_blank" class="social-icon-circle"><i class="fab fa-whatsapp"></i></a>
-                    <span class="social-label">Whatsapp</span>
-                </div>
-                <div class="text-center">
-                    <a href="https://discord.gg/QsvgBQQHg" target="_blank" class="social-icon-circle"><i class="fab fa-discord"></i></a>
-                    <span class="social-label">Discord</span>
-                </div>
-                <div class="text-center">
-                    <a href="https://t.me/KCG01Africa" target="_blank" class="social-icon-circle"><i class="fab fa-telegram"></i></a>
-                    <span class="social-label">Telegram</span>
-                </div>
-            </div>
-            <div class="mt-5">
-                <div class="glass-card p-4">
-                    <i class="fas fa-users fa-3x text-info mb-3"></i>
-                    <h4>12,000+ active traders</h4>
-                    <p>Real-time chat, mentoring &amp; copy-trade insights.</p>
-                    <button class="btn btn-glow join-community-demo">Join Community <i class="fab fa-discord"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ─── TESTIMONIALS ─── -->
-<section class="container py-5">
-    <div class="glass-card p-4 p-xl-5">
-        <h2 class="text-center display-5 fw-bold mb-4">What Our <span class="text-info">Traders Say</span></h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="mt-2">"Kavier signals have been a game changer. I've grown my account 40% in just 2 months."</p>
-                    <div class="d-flex align-items-center gap-2 mt-3">
-                        <div class="leaderboard-avatar" style="width:32px;height:32px;">MT</div>
-                        <div><strong>Mark T.</strong><br><small class="text-secondary">Futures trader</small></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="mt-2">"The AI entries are incredibly accurate. I stopped overtrading and started winning consistently."</p>
-                    <div class="d-flex align-items-center gap-2 mt-3">
-                        <div class="leaderboard-avatar" style="width:32px;height:32px;">SL</div>
-                        <div><strong>Sarah L.</strong><br><small class="text-secondary">Crypto & forex</small></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="mt-2">"Kavier's community is amazing. I've learned so much from the daily recaps and live streams."</p>
-                    <div class="d-flex align-items-center gap-2 mt-3">
-                        <div class="leaderboard-avatar" style="width:32px;height:32px;">RJ</div>
-                        <div><strong>Ricky J.</strong><br><small class="text-secondary">Swing trader</small></div>
+                    <div class="modal-body">
+                        <form id="authForm">
+                            <div class="mb-3">
+                                <label class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="authEmail" required
+                                    placeholder="trader@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="authPassword" required
+                                    placeholder="••••••••">
+                                <div id="strengthBar" class="password-strength mt-1"></div>
+                                <div id="strengthText" class="small text-secondary mt-1"></div>
+                            </div>
+                            <div id="authError" class="text-danger small mb-2"></div>
+                            <button type="submit" class="btn btn-glow w-100" id="authSubmitBtn">Login</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="#" id="toggleAuthMode" class="text-info">Need an account? Sign up</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ─── RISK DISCLAIMER ─── -->
-<div class="container mb-4">
-    <div class="risk-badge">
-        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-        <strong>⚠️ HIGH-RISK DISCLAIMER:</strong> 1. Trading foreign exchange (Forex) on margin carries a high level of risk and may not be suitable for all investors. The high degree of leverage can work against you as well as for you. Before deciding to trade, you should carefully consider your investment objectives, level of experience, and risk appetite.
-
-· Loss of Capital: You must be prepared to lose all of the capital you initially deposit. In certain over-the-counter (OTC) margin accounts, your losses can exceed your initial investment, leading to a margin call where you are required to deposit additional funds.
-· No Guarantees: Past performance does not guarantee future results. Any historical data, backtesting, or hypothetical performance results have inherent limitations and do not represent actual trading.
-· Not Financial Advice: This content is for educational and informational purposes only. It does not constitute personalized financial, investment, or trading advice. You are solely responsible for your trading decisions.
-· Market Volatility: Forex markets are influenced by global geopolitical events, central bank policies, and economic data releases, which can cause extreme slippage, gaps, and rapid price movements that may trigger stop-losses at unfavorable levels.
-
-<br>
-
-2. Realistic Statistical Probabilities of Profitability
-
-The industry data is stark. According to comprehensive disclosures required by regulators like the ESMA (European Securities and Markets Authority) and FCA, between 70% and 82% of retail investor accounts lose money trading CFDs and Forex.
-
-Here is the realistic breakdown of a cohort of 100 new retail forex traders tracked over a 12-month period:
-
-Outcome Probability Reality Check
-Total Loss (Blown Account) 30% - 40% These traders lose 90%+ of their initial capital due to over-leveraging, refusing to use stop-losses, or revenge trading.
-Net Loss (Incremental) 30% - 40% These traders finish the year with a net loss (e.g., -10% to -50%). They have decent strategies but poor risk management or inconsistent discipline.
-Break-Even (0% ± 5%) 10% - 15% These traders survive but fail to beat a standard high-yield savings account. After accounting for swap fees (overnight interest) and spreads, their net profit is negligible.
-Profitable (Net Gain) 10% - 15% These traders make money. However, most fall into the 5%–15% annual return bracket, which is lower than a standard stock index fund over the long term.
-Consistent Alpha (2+ Years) < 5% This is the professional tier. Only 3%–5% of retail traders achieve sustainable profitability year-over-year that outpaces the broader market, often due to proprietary algorithms, institutional execution, or years of psychological conditioning.
-    </div>
-</div>
-
-<!-- ─── AUTH MODAL ─── -->
-<div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-bottom border-info">
-                <h5 class="modal-title text-info"><i class="fas fa-user-astronaut"></i> <span id="authModeText">Login</span></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="authForm">
-                    <div class="mb-3">
-                        <label class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="authEmail" required placeholder="trader@example.com">
+        <!-- ─── FOOTER ─── -->
+        <footer class="pt-5 pb-4 mt-3" style="background:#03050b;border-top:1px solid rgba(0,255,255,0.12);">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5 mb-4">
+                        <h4 class="fw-bold d-flex align-items-center gap-2">
+                            <img src="logo.png" alt="Kavier logo"
+                                style="width:38px;height:38px;object-fit:cover;border-radius:12px;">
+                            KAVIER<span class="text-info"> CAPITAL</span>
+                        </h4>
+                        <p>Where data-driven signals meet multi-market execution.</p>
+                        <div class="small text-secondary">© 2026 Kavier Capital Group — unlocking financial frontiers.
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="authPassword" required placeholder="••••••••">
-                        <div id="strengthBar" class="password-strength mt-1"></div>
-                        <div id="strengthText" class="small text-secondary mt-1"></div>
+                    <div class="col-md-3 mb-4">
+                        <h6>Services</h6>
+                        <ul class="list-unstyled small">
+                            <li>Futures Signals</li>
+                            <li>Crypto Signals</li>
+                            <li>Forex &amp; Stocks</li>
+                            <li>Meme Coin Analysis</li>
+                        </ul>
                     </div>
-                    <div id="authError" class="text-danger small mb-2"></div>
-                    <button type="submit" class="btn btn-glow w-100" id="authSubmitBtn">Login</button>
-                </form>
-                <div class="text-center mt-3">
-                    <a href="#" id="toggleAuthMode" class="text-info">Need an account? Sign up</a>
+                    <div class="col-md-2 mb-4">
+                        <h6>Affiliates</h6>
+                        <ul class="list-unstyled small">
+                            <li>Broker Partners</li>
+                            <li>Prop Firm Program</li>
+                            <li>Ambassador</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2 mb-4">
+                        <h6>Social</h6>
+                        <ul class="list-unstyled d-flex gap-3">
+                            <li><a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank"
+                                    class="text-info"><i class="fab fa-facebook fa-lg"></i></a></li>
+                            <li><a href="https://www.instagram.com/kcg_official1?utm_source=qr" target="_blank"
+                                    class="text-info"><i class="fab fa-instagram fa-lg"></i></a></li>
+                            <li><a href="https://t.me/KCG01Africa" target="_blank" class="text-info"><i
+                                        class="fab fa-telegram fa-lg"></i></a></li>
+                        </ul>
+                    </div>
                 </div>
+                <hr class="opacity-25">
+                <div class="text-center text-secondary small">All trading involves risk. Our signal service is a
+                    subscription-based educational tool — not financial advice.</div>
             </div>
-        </div>
-    </div>
-</div>
+        </footer>
 
-<!-- ─── FOOTER ─── -->
-<footer class="pt-5 pb-4 mt-3" style="background:#03050b;border-top:1px solid rgba(0,255,255,0.12);">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-5 mb-4">
-                <h4 class="fw-bold d-flex align-items-center gap-2">
-                    <img src="logo.png" alt="Kavier logo" style="width:38px;height:38px;object-fit:cover;border-radius:12px;">
-                    KAVIER<span class="text-info"> CAPITAL</span>
-                </h4>
-                <p>Where data-driven signals meet multi-market execution.</p>
-                <div class="small text-secondary">© 2026 Kavier Capital Group — unlocking financial frontiers.</div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <h6>Services</h6>
-                <ul class="list-unstyled small">
-                    <li>Futures Signals</li>
-                    <li>Crypto Signals</li>
-                    <li>Forex &amp; Stocks</li>
-                    <li>Meme Coin Analysis</li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h6>Affiliates</h6>
-                <ul class="list-unstyled small">
-                    <li>Broker Partners</li>
-                    <li>Prop Firm Program</li>
-                    <li>Ambassador</li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h6>Social</h6>
-                <ul class="list-unstyled d-flex gap-3">
-                    <li><a href="https://www.facebook.com/share/194kmTBMFP/?mibextid=wwXIfr" target="_blank" class="text-info"><i class="fab fa-facebook fa-lg"></i></a></li>
-                    <li><a href="https://www.instagram.com/kcg_official1?utm_source=qr" target="_blank" class="text-info"><i class="fab fa-instagram fa-lg"></i></a></li>
-                    <li><a href="https://t.me/KCG01Africa" target="_blank" class="text-info"><i class="fab fa-telegram fa-lg"></i></a></li>
-                </ul>
-            </div>
-        </div>
-        <hr class="opacity-25">
-        <div class="text-center text-secondary small">All trading involves risk. Our signal service is a subscription-based educational tool — not financial advice.</div>
-    </div>
-</footer>
+        <!-- ─── SCRIPTS ─── -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+        </script>
+        <script src="main.js">
 
-<!-- ─── SCRIPTS ─── -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
-</script>
-<script src="main.js"></script>
+        </script>
 </body>
 
 </html>
