@@ -1,2857 +1,1269 @@
 // ============================================================
-// KAVIER CAPITAL GROUP
-// MAIN.JS V2
+// KAVIER CAPITAL GROUP — APP LOGIC V2
 // Existing index.html layout preserved
 // ============================================================
 
-
-// ============================================================
-// SUPABASE
-// ============================================================
-
-const SUPABASE_URL =
-    'https://ayeobjoaxxcvlccpzxic.supabase.co';
-
-const SUPABASE_PUBLISHABLE_KEY =
-    'sb_publishable_2nvoZ7z1G9hePh5NJse5uA_9oBQoBcf';
-
+// ─── Supabase ───
+const SUPABASE_URL = 'https://ayeobjoaxxcvlccpzxic.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_2nvoZ7z1G9hePh5NJse5uA_9oBQoBcf';
 const { createClient } = window.supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+window.supabaseClient = supabaseClient;
 
-const supabaseClient = createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
-
-
-// ============================================================
-// APP STATE
-// ============================================================
-
+// ─── Application state ───
 let currentUser = null;
 let currentProfile = null;
 let currentSubscription = null;
 let currentPlan = null;
-
 let hasPremiumAccess = false;
 let isLoginMode = true;
-
 let authRefreshCounter = 0;
 
+// ─── Payment state ───
+let activePaymentReference = null;
+let paymentPollTimer = null;
+let paymentPollAttempts = 0;
 
-// ============================================================
-// DOM ELEMENTS
-// ============================================================
+// ─── DOM refs ───
+const authModalEl = document.getElementById('authModal');
+const authModal = authModalEl ? new bootstrap.Modal(authModalEl) : null;
+const authForm = document.getElementById('authForm');
+const authEmail = document.getElementById('authEmail');
+const authPassword = document.getElementById('authPassword');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+const authModeText = document.getElementById('authModeText');
+const toggleAuthMode = document.getElementById('toggleAuthMode');
+const authError = document.getElementById('authError');
+const authButtonsDiv = document.getElementById('authButtons');
+const userInfoDiv = document.getElementById('userInfo');
+const userEmailDisplay = document.getElementById('userEmailDisplay');
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+const signalFeed = document.getElementById('signalFeed');
 
-const authModalEl =
-    document.getElementById('authModal');
+// ─── Payment modal refs ───
+const paymentModalEl = document.getElementById('paymentModal');
+const paymentModal = paymentModalEl ? bootstrap.Modal.getOrCreateInstance(paymentModalEl) : null;
+const paymentForm = document.getElementById('paymentForm');
+const paymentPhone = document.getElementById('paymentPhone');
+const paymentStatus = document.getElementById('paymentStatus');
+const paymentSubmitBtn = document.getElementById('paymentSubmitBtn');
+const paymentCheckBtn = document.getElementById('paymentCheckBtn');
+const paymentPlanSummary = document.getElementById('paymentPlanSummary');
 
-const authModal =
-    authModalEl
-        ? new bootstrap.Modal(authModalEl)
-        : null;
+// Existing pricing-card elements. No HTML restructuring required.
+const eliteCard = document.querySelector('#signals .single-offer-card');
+const elitePriceEl = eliteCard?.querySelector('.price-current');
+const eliteButton = eliteCard?.querySelector('.subscribe-demo[data-plan="elite"]');
+const eliteNote = eliteCard?.querySelector('p.text-center.text-secondary.small');
 
+// ─── Helpers ───
+function showToast(msg) {
+    const el = document.getElementById('liveToast');
+    const msgEl = document.getElementById('toastMsg');
+    if (!el || !msgEl) return;
 
-const authForm =
-    document.getElementById('authForm');
-
-const authEmail =
-    document.getElementById('authEmail');
-
-const authPassword =
-    document.getElementById('authPassword');
-
-const authSubmitBtn =
-    document.getElementById('authSubmitBtn');
-
-const authModeText =
-    document.getElementById('authModeText');
-
-const toggleAuthMode =
-    document.getElementById('toggleAuthMode');
-
-const authError =
-    document.getElementById('authError');
-
-const authButtonsDiv =
-    document.getElementById('authButtons');
-
-const userInfoDiv =
-    document.getElementById('userInfo');
-
-const userEmailDisplay =
-    document.getElementById('userEmailDisplay');
-
-const strengthBar =
-    document.getElementById('strengthBar');
-
-const strengthText =
-    document.getElementById('strengthText');
-
-const signalFeed =
-    document.getElementById('signalFeed');
-
-
-// Existing pricing card
-const eliteCard =
-    document.querySelector(
-        '#signals .single-offer-card'
-    );
-
-const elitePriceEl =
-    eliteCard?.querySelector(
-        '.price-current'
-    );
-
-const eliteButton =
-    eliteCard?.querySelector(
-        '.subscribe-demo[data-plan="elite"]'
-    );
-
-const eliteNote =
-    eliteCard?.querySelector(
-        'p.text-center.text-secondary.small'
-    );
-
-
-// ============================================================
-// TOAST
-// ============================================================
-
-function showToast(message) {
-
-    const toast =
-        document.getElementById('liveToast');
-
-    const toastMessage =
-        document.getElementById('toastMsg');
-
-
-    if (
-        !toast ||
-        !toastMessage
-    ) {
-        return;
-    }
-
-
-    toastMessage.innerText =
-        message;
-
-
-    toast.classList.add('show');
-
-
-    clearTimeout(
-        toast._timer
-    );
-
-
-    toast._timer =
-        setTimeout(() => {
-
-            toast.classList.remove('show');
-
-        }, 3200);
-
+    msgEl.innerText = msg;
+    el.classList.add('show');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 3200);
 }
-
-
-// ============================================================
-// HTML ESCAPE
-// ============================================================
 
 function escapeHTML(value) {
-
-    return String(
-        value ?? ''
-    )
-
-        .replaceAll(
-            '&',
-            '&amp;'
-        )
-
-        .replaceAll(
-            '<',
-            '&lt;'
-        )
-
-        .replaceAll(
-            '>',
-            '&gt;'
-        )
-
-        .replaceAll(
-            '"',
-            '&quot;'
-        )
-
-        .replaceAll(
-            "'",
-            '&#039;'
-        );
-
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
 }
-
-
-// ============================================================
-// FORMAT PRICE
-// ============================================================
 
 function formatPrice(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    const n = Number(value);
+    if (!Number.isFinite(n)) return escapeHTML(value);
 
-    if (
-        value === null ||
-        value === undefined ||
-        value === ''
-    ) {
-
-        return '—';
-
-    }
-
-
-    const number =
-        Number(value);
-
-
-    if (
-        !Number.isFinite(number)
-    ) {
-
-        return escapeHTML(value);
-
-    }
-
-
-    return number.toLocaleString(
-        undefined,
-        {
-            minimumFractionDigits:
-                number < 1
-                    ? 2
-                    : 0,
-
-            maximumFractionDigits: 8
-        }
-    );
-
+    return n.toLocaleString(undefined, {
+        minimumFractionDigits: n < 1 ? 2 : 0,
+        maximumFractionDigits: 8
+    });
 }
-
-
-// ============================================================
-// FORMAT DATE
-// ============================================================
 
 function formatDate(value) {
-
-    if (!value) {
-        return '';
-    }
-
-
-    const date =
-        new Date(value);
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return '';
-
-    }
-
-
-    return date.toLocaleDateString(
-        undefined,
-        {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }
-    );
-
+    if (!value) return '';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
 }
 
+// ─── Password strength ───
+function checkStrength(pw) {
+    if (!strengthBar || !strengthText) return;
 
-// ============================================================
-// PASSWORD STRENGTH
-// ============================================================
-
-function checkStrength(password) {
-
-    if (
-        !strengthBar ||
-        !strengthText
-    ) {
-
+    if (!pw || isLoginMode) {
+        strengthBar.style.width = '0%';
+        strengthText.innerText = '';
         return;
-
     }
-
-
-    if (
-        !password ||
-        isLoginMode
-    ) {
-
-        strengthBar.style.width =
-            '0%';
-
-        strengthText.innerText =
-            '';
-
-        return;
-
-    }
-
 
     let score = 0;
+    if (pw.length >= 8) score += 25;
+    if (/[A-Z]/.test(pw)) score += 25;
+    if (/[0-9]/.test(pw)) score += 25;
+    if (/[^A-Za-z0-9]/.test(pw)) score += 25;
 
-
-    if (
-        password.length >= 8
-    ) {
-
-        score += 25;
-
-    }
-
-
-    if (
-        /[A-Z]/.test(password)
-    ) {
-
-        score += 25;
-
-    }
-
-
-    if (
-        /[0-9]/.test(password)
-    ) {
-
-        score += 25;
-
-    }
-
-
-    if (
-        /[^A-Za-z0-9]/.test(password)
-    ) {
-
-        score += 25;
-
-    }
-
-
-    strengthBar.style.width =
-        score + '%';
-
-
-    if (score < 50) {
-
-        strengthBar.style.background =
-            '#ff4d6d';
-
-        strengthText.innerText =
-            'Weak';
-
-    }
-
-    else if (score < 75) {
-
-        strengthBar.style.background =
-            '#ffb347';
-
-        strengthText.innerText =
-            'Medium';
-
-    }
-
-    else {
-
-        strengthBar.style.background =
-            '#00ffb3';
-
-        strengthText.innerText =
-            'Strong';
-
-    }
-
+    strengthBar.style.width = score + '%';
+    strengthBar.style.background = score < 50 ? '#ff4d6d' : score < 75 ? '#ffb347' : '#00ffb3';
+    strengthText.innerText = score < 50 ? 'Weak' : score < 75 ? 'Medium' : 'Strong';
 }
 
+authPassword?.addEventListener('input', (e) => checkStrength(e.target.value));
 
-authPassword?.addEventListener(
-    'input',
-
-    event => {
-
-        checkStrength(
-            event.target.value
-        );
-
-    }
-);
-
-
-// ============================================================
-// AUTH MODE
-// ============================================================
-
+// ─── Auth mode ───
 function setAuthMode(loginMode) {
+    isLoginMode = loginMode;
 
-    isLoginMode =
-        loginMode;
-
-
-    if (authModeText) {
-
-        authModeText.innerText =
-            loginMode
-                ? 'Login'
-                : 'Sign Up';
-
-    }
-
-
-    if (authSubmitBtn) {
-
-        authSubmitBtn.innerText =
-            loginMode
-                ? 'Login'
-                : 'Sign Up';
-
-    }
-
-
+    if (authModeText) authModeText.innerText = loginMode ? 'Login' : 'Sign Up';
+    if (authSubmitBtn) authSubmitBtn.innerText = loginMode ? 'Login' : 'Sign Up';
     if (toggleAuthMode) {
-
-        toggleAuthMode.innerText =
-            loginMode
-
-                ? 'Need an account? Sign up'
-
-                : 'Already have an account? Login';
-
+        toggleAuthMode.innerText = loginMode
+            ? 'Need an account? Sign up'
+            : 'Already have an account? Login';
     }
-
-
-    if (authError) {
-
-        authError.innerText =
-            '';
-
-    }
-
-
-    checkStrength(
-        authPassword?.value || ''
-    );
-
+    if (authError) authError.innerText = '';
+    checkStrength(authPassword?.value || '');
 }
 
+toggleAuthMode?.addEventListener('click', (e) => {
+    e.preventDefault();
+    setAuthMode(!isLoginMode);
+});
 
-toggleAuthMode?.addEventListener(
-    'click',
+document.getElementById('loginNavBtn')?.addEventListener('click', () => setAuthMode(true));
+document.getElementById('signupNavBtn')?.addEventListener('click', () => setAuthMode(false));
 
-    event => {
-
-        event.preventDefault();
-
-        setAuthMode(
-            !isLoginMode
-        );
-
-    }
-);
-
-
-document
-    .getElementById('loginNavBtn')
-    ?.addEventListener(
-        'click',
-
-        () => {
-
-            setAuthMode(true);
-
-        }
-    );
-
-
-document
-    .getElementById('signupNavBtn')
-    ?.addEventListener(
-        'click',
-
-        () => {
-
-            setAuthMode(false);
-
-        }
-    );
-
-
-// ============================================================
-// LOAD SUBSCRIPTION PLAN
-// ============================================================
-
+// ─── Load plan from database ───
 async function loadPlan() {
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-
-            .from('plans')
-
-            .select(`
-                id,
-                code,
-                name,
-                price,
-                currency,
-                billing_period_months,
-                description,
-                active
-            `)
-
-            .eq(
-                'code',
-                'pro_elite_monthly'
-            )
-
-            .eq(
-                'active',
-                true
-            )
-
-            .maybeSingle();
-
+    const { data, error } = await supabaseClient
+        .from('plans')
+        .select('id, code, name, price, currency, billing_period_months, description, active')
+        .eq('code', 'pro_elite_monthly')
+        .eq('active', true)
+        .maybeSingle();
 
     if (error) {
-
-        console.error(
-            'Plan load error:',
-            error
-        );
-
+        console.error('Plan load error:', error);
         return;
-
     }
 
+    currentPlan = data;
+    if (!currentPlan) return;
 
-    currentPlan =
-        data;
-
-
-    if (!currentPlan) {
-
-        console.warn(
-            'Pro Elite plan not found.'
-        );
-
-        return;
-
-    }
-
-
-    // Update only the price.
-    // Existing HTML layout stays untouched.
-
+    // Keep the existing card and styling; update only its live price.
     if (elitePriceEl) {
+        const amount = Number(currentPlan.price).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        });
+        const period = Number(currentPlan.billing_period_months) === 1
+            ? '/mo'
+            : `/${currentPlan.billing_period_months}mo`;
 
-        const amount =
-            Number(
-                currentPlan.price
-            )
-                .toLocaleString(
-                    undefined,
-                    {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 2
-                    }
-                );
-
-
-        const months =
-            Number(
-                currentPlan
-                    .billing_period_months
-            );
-
-
-        const period =
-            months === 1
-
-                ? '/mo'
-
-                : `/${months}mo`;
-
-
-        elitePriceEl.innerHTML =
-            `K${amount} <small>${period}</small>`;
-
+        elitePriceEl.innerHTML = `K${amount} <small>${period}</small>`;
     }
-
 }
 
-
-// ============================================================
-// LOAD USER PROFILE
-// ============================================================
-
+// ─── Load current profile ───
 async function loadProfile() {
+    currentProfile = null;
+    if (!currentUser) return;
 
-    currentProfile =
-        null;
-
-
-    if (!currentUser) {
-
-        return;
-
-    }
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-
-            .from('profiles')
-
-            .select(`
-                id,
-                display_name,
-                phone_e164,
-                role
-            `)
-
-            .eq(
-                'id',
-                currentUser.id
-            )
-
-            .maybeSingle();
-
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('id, display_name, phone_e164, role')
+        .eq('id', currentUser.id)
+        .maybeSingle();
 
     if (error) {
-
-        console.error(
-            'Profile load error:',
-            error
-        );
-
+        console.error('Profile load error:', error);
         return;
-
     }
 
-
-    currentProfile =
-        data;
-
+    currentProfile = data;
 }
 
-
-// ============================================================
-// LOAD SUBSCRIPTION
-// ============================================================
-
+// ─── Load subscription ───
 async function loadSubscription() {
-
-    currentSubscription =
-        null;
-
-    hasPremiumAccess =
-        false;
-
+    currentSubscription = null;
+    hasPremiumAccess = false;
 
     if (!currentUser) {
-
         updateSubscriptionButton();
-
         return;
-
     }
 
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-
-            .from('subscriptions')
-
-            .select(`
-                id,
-                plan_id,
-                status,
-                current_period_start,
-                current_period_end,
-                auto_renew
-            `)
-
-            .eq(
-                'user_id',
-                currentUser.id
-            )
-
-            .maybeSingle();
-
+    const { data, error } = await supabaseClient
+        .from('subscriptions')
+        .select('id, plan_id, status, current_period_start, current_period_end, auto_renew')
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
 
     if (error) {
-
-        console.error(
-            'Subscription load error:',
-            error
-        );
-
+        console.error('Subscription load error:', error);
     }
 
+    currentSubscription = data;
 
-    currentSubscription =
-        data;
+    const expiry = data?.current_period_end ? new Date(data.current_period_end) : null;
+    const activeSubscription = Boolean(
+        data &&
+        data.status === 'active' &&
+        expiry &&
+        expiry.getTime() > Date.now()
+    );
 
-
-    const expiry =
-        data?.current_period_end
-
-            ? new Date(
-                data.current_period_end
-            )
-
-            : null;
-
-
-    const subscriptionActive =
-        Boolean(
-
-            data
-
-            &&
-
-            data.status ===
-                'active'
-
-            &&
-
-            expiry
-
-            &&
-
-            expiry.getTime() >
-                Date.now()
-
-        );
-
-
-    const adminAccess =
-        currentProfile?.role ===
-        'admin';
-
-
-    hasPremiumAccess =
-        subscriptionActive ||
-        adminAccess;
-
+    const adminAccess = currentProfile?.role === 'admin';
+    hasPremiumAccess = activeSubscription || adminAccess;
 
     updateSubscriptionButton();
-
 }
-
-
-// ============================================================
-// UPDATE SUBSCRIPTION BUTTON
-// ============================================================
 
 function updateSubscriptionButton() {
+    if (!eliteButton) return;
 
-    if (!eliteButton) {
-
-        return;
-
-    }
-
-
-    // Logged out
     if (!currentUser) {
-
-        eliteButton.innerHTML =
-            `
-            <i class="fas fa-gem me-2"></i>
-            Claim 60% Offer Now
-            `;
-
-
-        if (eliteNote) {
-
-            eliteNote.innerText =
-                'Login to subscribe · Monthly access';
-
-        }
-
-
+        eliteButton.innerHTML = '<i class="fas fa-gem me-2"></i> Claim 60% Offer Now';
+        if (eliteNote) eliteNote.innerText = 'Login to subscribe · Monthly access';
         return;
-
     }
 
-
-    // Admin
-    if (
-        currentProfile?.role ===
-        'admin'
-    ) {
-
-        eliteButton.innerHTML =
-            `
-            <i class="fas fa-shield-halved me-2"></i>
-            Admin Access Active
-            `;
-
-
-        if (eliteNote) {
-
-            eliteNote.innerText =
-                'Administrator account · Premium access enabled';
-
-        }
-
-
+    if (currentProfile?.role === 'admin') {
+        eliteButton.innerHTML = '<i class="fas fa-shield-halved me-2"></i> Admin Access Active';
+        if (eliteNote) eliteNote.innerText = 'Administrator account · Premium access enabled';
         return;
-
     }
 
-
-    // Active paid subscription
     if (hasPremiumAccess) {
-
-        eliteButton.innerHTML =
-            `
-            <i class="fas fa-circle-check me-2"></i>
-            Pro Elite Active
-            `;
-
-
-        const expiryText =
-            formatDate(
-                currentSubscription
-                    ?.current_period_end
-            );
-
-
-        if (eliteNote) {
-
-            eliteNote.innerText =
-                expiryText
-
-                    ? `Premium access active until ${expiryText}`
-
-                    : 'Premium access active';
-
-        }
-
-
+        eliteButton.innerHTML = '<i class="fas fa-circle-check me-2"></i> Pro Elite Active';
+        const expiryText = formatDate(currentSubscription?.current_period_end);
+        if (eliteNote) eliteNote.innerText = expiryText
+            ? `Premium access active until ${expiryText}`
+            : 'Premium access active';
         return;
-
     }
 
-
-    // Logged in but unpaid
-    eliteButton.innerHTML =
-        `
-        <i class="fas fa-gem me-2"></i>
-        Claim 60% Offer Now
-        `;
-
-
-    if (eliteNote) {
-
-        eliteNote.innerText =
-            'Monthly subscription · Payment connection comes next';
-
-    }
-
+    eliteButton.innerHTML = '<i class="fas fa-gem me-2"></i> Claim 60% Offer Now';
+    if (eliteNote) eliteNote.innerText = 'Monthly subscription · Secure mobile money payment via Lipila';
 }
 
-
-// ============================================================
-// NAVBAR USER UI
-// ============================================================
-
+// ─── Navbar user state ───
 function updateUI(user) {
-
-    currentUser =
-        user;
-
+    currentUser = user;
 
     if (user) {
+        authButtonsDiv?.classList.add('d-none');
+        userInfoDiv?.classList.remove('d-none');
 
-        authButtonsDiv
-            ?.classList
-            .add('d-none');
-
-
-        userInfoDiv
-            ?.classList
-            .remove('d-none');
-
-
-        const label =
-            currentProfile?.display_name
-
-            ||
-
-            user.email
-                ?.split('@')[0]
-
-            ||
-
-            'Member';
-
-
-        if (userEmailDisplay) {
-
-            userEmailDisplay.innerText =
-                label;
-
-        }
-
+        const label = currentProfile?.display_name || user.email?.split('@')[0] || 'Member';
+        if (userEmailDisplay) userEmailDisplay.innerText = label;
+    } else {
+        authButtonsDiv?.classList.remove('d-none');
+        userInfoDiv?.classList.add('d-none');
+        if (userEmailDisplay) userEmailDisplay.innerText = '';
     }
-
-    else {
-
-        authButtonsDiv
-            ?.classList
-            .remove('d-none');
-
-
-        userInfoDiv
-            ?.classList
-            .add('d-none');
-
-
-        if (userEmailDisplay) {
-
-            userEmailDisplay.innerText =
-                '';
-
-        }
-
-    }
-
 }
 
-
-// ============================================================
-// LOAD SIGNALS
-// ============================================================
-
+// ─── Signals ───
 async function loadSignals() {
+    if (!signalFeed) return;
 
-    if (!signalFeed) {
-
-        return;
-
-    }
-
-
-    signalFeed.innerHTML =
-        `
+    signalFeed.innerHTML = `
         <div class="text-center py-4 text-secondary">
-
-            <div
-                class="
-                    spinner-border
-                    spinner-border-sm
-                    text-info
-                    me-2
-                "
-                role="status">
-            </div>
-
+            <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
             Loading signal alerts...
-
         </div>
-        `;
+    `;
 
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-
-            .from('signals')
-
-            .select(`
-                id,
-                market,
-                symbol,
-                direction,
-                entry_price,
-                stop_loss,
-                status,
-                analysis,
-                visibility,
-                published_at,
-
-                signal_targets (
-                    target_number,
-                    target_price,
-                    hit_at
-                )
-            `)
-
-            .order(
-                'published_at',
-                {
-                    ascending: false
-                }
+    const { data, error } = await supabaseClient
+        .from('signals')
+        .select(`
+            id,
+            market,
+            symbol,
+            direction,
+            entry_price,
+            stop_loss,
+            status,
+            analysis,
+            visibility,
+            published_at,
+            signal_targets (
+                target_number,
+                target_price,
+                hit_at
             )
-
-            .limit(20);
-
+        `)
+        .order('published_at', { ascending: false })
+        .limit(20);
 
     if (error) {
-
-        console.error(
-            'Signal load error:',
-            error
-        );
-
-
-        signalFeed.innerHTML =
-            `
-            <div
-                class="
-                    text-center
-                    py-4
-                    text-danger
-                "
-            >
-
-                <i
-                    class="
-                        fas
-                        fa-triangle-exclamation
-                        me-2
-                    "
-                ></i>
-
+        console.error('Signal load error:', error);
+        signalFeed.innerHTML = `
+            <div class="text-center py-4 text-danger">
+                <i class="fas fa-triangle-exclamation me-2"></i>
                 Unable to load signals right now.
-
             </div>
-            `;
-
-
+        `;
         return;
-
     }
 
-
-    renderSignals(
-        data || []
-    );
-
+    renderSignals(data || []);
 }
-
-
-// ============================================================
-// RENDER SIGNALS
-// ============================================================
 
 function renderSignals(signals) {
-
-    if (!signalFeed) {
-
-        return;
-
-    }
-
+    if (!signalFeed) return;
 
     if (!signals.length) {
+        const message = currentUser
+            ? 'No signal alerts are available for your account yet.'
+            : 'No public signal alerts are available right now. Login to access member features.';
 
-        const message =
-            currentUser
+        signalFeed.innerHTML = `
+            <div class="text-center py-4 text-secondary">
+                <i class="fas fa-satellite-dish text-info fa-2x mb-3"></i>
+                <div>${escapeHTML(message)}</div>
+            </div>
+        `;
+        return;
+    }
 
-                ? 'No signal alerts are available for your account yet.'
+    signalFeed.innerHTML = signals.map((signal) => {
+        const isLong = signal.direction === 'LONG';
+        const directionIcon = isLong ? 'fa-arrow-up text-success' : 'fa-arrow-down text-danger';
+        const borderColor = isLong ? '#00ffb3' : '#ff4d6d';
 
-                : 'No public signal alerts are available right now. Login to access member features.';
+        const targets = [...(signal.signal_targets || [])]
+            .sort((a, b) => a.target_number - b.target_number);
 
+        const tpText = targets.length
+            ? targets.map((target) => `TP${target.target_number}: ${formatPrice(target.target_price)}`).join(' · ')
+            : 'TP: —';
 
-        signalFeed.innerHTML =
-            `
-            <div
-                class="
-                    text-center
-                    py-4
-                    text-secondary
-                "
-            >
+        const slText = signal.stop_loss !== null
+            ? `SL: ${formatPrice(signal.stop_loss)}`
+            : 'SL: —';
 
-                <i
-                    class="
-                        fas
-                        fa-satellite-dish
-                        text-info
-                        fa-2x
-                        mb-3
-                    "
-                ></i>
+        const visibility = signal.visibility === 'PREMIUM'
+            ? '<span class="badge bg-warning text-dark ms-2">Premium</span>'
+            : '<span class="badge bg-secondary ms-2">Public</span>';
 
-                <div>
-                    ${escapeHTML(message)}
+        const published = signal.published_at
+            ? new Date(signal.published_at).toLocaleString()
+            : '';
+
+        return `
+            <div class="p-3 rounded-3 mb-2"
+                 style="background:rgba(0,255,255,0.04);border-left:3px solid ${borderColor};">
+                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <span class="fw-semibold">
+                        <i class="fas ${directionIcon} me-1"></i>
+                        ${escapeHTML(signal.symbol)} ${escapeHTML(signal.direction)}
+                        ${visibility}
+                    </span>
+
+                    <span>
+                        Entry: ${formatPrice(signal.entry_price)} |
+                        ${slText} |
+                        ${tpText}
+                    </span>
+
+                    <span class="text-info small">${escapeHTML(published)}</span>
                 </div>
 
+                ${signal.analysis ? `
+                    <div class="small text-secondary mt-2">
+                        ${escapeHTML(signal.analysis)}
+                    </div>
+                ` : ''}
             </div>
-            `;
-
-
-        return;
-
-    }
-
-
-    signalFeed.innerHTML =
-        signals
-
-            .map(
-                signal => {
-
-                    const isLong =
-                        signal.direction ===
-                        'LONG';
-
-
-                    const directionIcon =
-                        isLong
-
-                            ? 'fa-arrow-up text-success'
-
-                            : 'fa-arrow-down text-danger';
-
-
-                    const borderColor =
-                        isLong
-
-                            ? '#00ffb3'
-
-                            : '#ff4d6d';
-
-
-                    const targets =
-                        [
-                            ...(
-                                signal
-                                    .signal_targets
-                                || []
-                            )
-                        ]
-
-                            .sort(
-                                (a, b) =>
-                                    a.target_number -
-                                    b.target_number
-                            );
-
-
-                    const tpText =
-                        targets.length
-
-                            ? targets
-                                .map(
-                                    target =>
-                                        `TP${target.target_number}: ${formatPrice(target.target_price)}`
-                                )
-                                .join(' · ')
-
-                            : 'TP: —';
-
-
-                    const slText =
-                        signal.stop_loss !==
-                        null
-
-                            ? `SL: ${formatPrice(signal.stop_loss)}`
-
-                            : 'SL: —';
-
-
-                    const visibility =
-                        signal.visibility ===
-                        'PREMIUM'
-
-                            ? `
-                                <span
-                                    class="
-                                        badge
-                                        bg-warning
-                                        text-dark
-                                        ms-2
-                                    "
-                                >
-                                    Premium
-                                </span>
-                              `
-
-                            : `
-                                <span
-                                    class="
-                                        badge
-                                        bg-secondary
-                                        ms-2
-                                    "
-                                >
-                                    Public
-                                </span>
-                              `;
-
-
-                    const published =
-                        signal.published_at
-
-                            ? new Date(
-                                signal.published_at
-                            )
-                                .toLocaleString()
-
-                            : '';
-
-
-                    return `
-                        <div
-                            class="
-                                p-3
-                                rounded-3
-                                mb-2
-                            "
-
-                            style="
-                                background:
-                                rgba(0,255,255,0.04);
-
-                                border-left:
-                                3px solid ${borderColor};
-                            "
-                        >
-
-                            <div
-                                class="
-                                    d-flex
-                                    justify-content-between
-                                    align-items-center
-                                    gap-3
-                                    flex-wrap
-                                "
-                            >
-
-                                <span class="fw-semibold">
-
-                                    <i
-                                        class="
-                                            fas
-                                            ${directionIcon}
-                                            me-1
-                                        "
-                                    ></i>
-
-                                    ${escapeHTML(signal.symbol)}
-
-                                    ${escapeHTML(signal.direction)}
-
-                                    ${visibility}
-
-                                </span>
-
-
-                                <span>
-
-                                    Entry:
-                                    ${formatPrice(signal.entry_price)}
-
-                                    |
-
-                                    ${slText}
-
-                                    |
-
-                                    ${tpText}
-
-                                </span>
-
-
-                                <span
-                                    class="
-                                        text-info
-                                        small
-                                    "
-                                >
-
-                                    ${escapeHTML(published)}
-
-                                </span>
-
-                            </div>
-
-
-                            ${
-                                signal.analysis
-
-                                    ? `
-                                    <div
-                                        class="
-                                            small
-                                            text-secondary
-                                            mt-2
-                                        "
-                                    >
-
-                                        ${escapeHTML(signal.analysis)}
-
-                                    </div>
-                                    `
-
-                                    : ''
-                            }
-
-                        </div>
-                    `;
-
-                }
-            )
-
-            .join('');
-
+        `;
+    }).join('');
 }
 
+// ─── Refresh account-dependent state ───
+async function refreshAccountState(user = currentUser) {
+    const refreshId = ++authRefreshCounter;
+    currentUser = user || null;
 
-// ============================================================
-// REFRESH USER STATE
-// ============================================================
-
-async function refreshAccountState(
-    user = currentUser
-) {
-
-    const refreshId =
-        ++authRefreshCounter;
-
-
-    currentUser =
-        user || null;
-
-
-    // Logged out
     if (!currentUser) {
-
-        currentProfile =
-            null;
-
-        currentSubscription =
-            null;
-
-        hasPremiumAccess =
-            false;
-
-
+        currentProfile = null;
+        currentSubscription = null;
+        hasPremiumAccess = false;
         updateUI(null);
-
         updateSubscriptionButton();
-
         await loadSignals();
-
         return;
-
     }
 
-
-    // Load profile
     await loadProfile();
+    if (refreshId !== authRefreshCounter) return;
 
+    updateUI(currentUser);
 
-    if (
-        refreshId !==
-        authRefreshCounter
-    ) {
-
-        return;
-
-    }
-
-
-    updateUI(
-        currentUser
-    );
-
-
-    // Load subscription
     await loadSubscription();
+    if (refreshId !== authRefreshCounter) return;
 
-
-    if (
-        refreshId !==
-        authRefreshCounter
-    ) {
-
-        return;
-
-    }
-
-
-    // Load signals
     await loadSignals();
-
 }
 
-
-// ============================================================
-// LOGIN / SIGNUP
-// ============================================================
-
-authForm?.addEventListener(
-    'submit',
-
-    async event => {
-
-        event.preventDefault();
-
-
-        const email =
-            authEmail
-                ?.value
-                .trim()
-            || '';
-
-
-        const password =
-            authPassword
-                ?.value
-            || '';
-
-
-        if (
-            !email ||
-            !password
-        ) {
-
-            if (authError) {
-
-                authError.innerText =
-                    'Email and password are required.';
-
-            }
-
-            return;
-
-        }
-
-
-        if (authError) {
-
-            authError.innerText =
-                '';
-
-        }
-
-
-        if (authSubmitBtn) {
-
-            authSubmitBtn.disabled =
-                true;
-
-
-            authSubmitBtn.innerText =
-                isLoginMode
-
-                    ? 'Logging in...'
-
-                    : 'Creating...';
-
-        }
-
-
-        try {
-
-            let result;
-
-
-            // LOGIN
-            if (isLoginMode) {
-
-                result =
-                    await supabaseClient
-                        .auth
-                        .signInWithPassword(
-                            {
-                                email,
-                                password
-                            }
-                        );
-
-            }
-
-
-            // SIGNUP
-            else {
-
-                result =
-                    await supabaseClient
-                        .auth
-                        .signUp(
-                            {
-                                email,
-
-                                password,
-
-                                options: {
-
-                                    emailRedirectTo:
-                                        window.location.origin
-
-                                }
-                            }
-                        );
-
-            }
-
-
-            if (result.error) {
-
-                throw result.error;
-
-            }
-
-
-            // Email confirmation required
-            if (
-                !isLoginMode
-
-                &&
-
-                result.data.user
-
-                &&
-
-                !result.data.session
-            ) {
-
-                if (authError) {
-
-                    authError.innerText =
-                        'Signup successful. Confirm your email, then log in.';
-
-                }
-
-
-                setAuthMode(true);
-
-
-                if (authPassword) {
-
-                    authPassword.value =
-                        '';
-
-                }
-
-
-                return;
-
-            }
-
-
-            const user =
-                result.data.user
-
-                ||
-
-                result.data.session
-                    ?.user
-
-                ||
-
-                null;
-
-
-            if (user) {
-
-                authModal?.hide();
-
-
-                authForm.reset();
-
-
-                await refreshAccountState(
-                    user
-                );
-
-
-                showToast(
-                    `Welcome ${user.email?.split('@')[0] || 'member'} 🚀`
-                );
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            if (authError) {
-
-                authError.innerText =
-                    error?.message
-
-                    ||
-
-                    'Authentication failed.';
-
-            }
-
-        }
-
-        finally {
-
-            if (authSubmitBtn) {
-
-                authSubmitBtn.disabled =
-                    false;
-
-
-                authSubmitBtn.innerText =
-                    isLoginMode
-
-                        ? 'Login'
-
-                        : 'Sign Up';
-
-            }
-
-        }
-
+// ─── Login / Signup ───
+authForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = authEmail?.value.trim() || '';
+    const password = authPassword?.value || '';
+
+    if (!email || !password) {
+        if (authError) authError.innerText = 'Email and password are required.';
+        return;
     }
-);
 
+    if (authError) authError.innerText = '';
+    if (authSubmitBtn) {
+        authSubmitBtn.disabled = true;
+        authSubmitBtn.innerText = isLoginMode ? 'Logging in...' : 'Creating...';
+    }
 
-// ============================================================
-// LOGOUT
-// ============================================================
+    try {
+        let result;
 
-document
-    .getElementById('logoutBtn')
-    ?.addEventListener(
-        'click',
-
-        async event => {
-
-            event.preventDefault();
-
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .auth
-                    .signOut();
-
-
-            if (error) {
-
-                console.error(
-                    error
-                );
-
-
-                showToast(
-                    'Unable to log out. Please try again.'
-                );
-
-
-                return;
-
-            }
-
-
-            await refreshAccountState(
-                null
-            );
-
-
-            showToast(
-                'Logged out'
-            );
-
-        }
-    );
-
-
-// ============================================================
-// SUBSCRIPTION BUTTON
-// ============================================================
-
-document
-    .querySelectorAll(
-        '.subscribe-demo'
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                'click',
-
-                event => {
-
-                    event.preventDefault();
-
-
-                    // Must login first
-                    if (!currentUser) {
-
-                        showToast(
-                            '🔐 Please login to subscribe'
-                        );
-
-
-                        setAuthMode(
-                            true
-                        );
-
-
-                        authModal?.show();
-
-
-                        return;
-
-                    }
-
-
-                    // Admin
-                    if (
-                        currentProfile?.role ===
-                        'admin'
-                    ) {
-
-                        showToast(
-                            '🛡️ Admin premium access is active'
-                        );
-
-
-                        return;
-
-                    }
-
-
-                    // Already subscribed
-                    if (hasPremiumAccess) {
-
-                        const expiry =
-                            formatDate(
-                                currentSubscription
-                                    ?.current_period_end
-                            );
-
-
-                        showToast(
-
-                            expiry
-
-                                ? `✅ Pro Elite active until ${expiry}`
-
-                                : '✅ Pro Elite is active'
-
-                        );
-
-
-                        return;
-
-                    }
-
-
-                    // ==================================================
-                    // LIPILA WILL BE CONNECTED HERE NEXT
-                    // ==================================================
-
-                    showToast(
-                        '💳 Your account is ready — Lipila payment is the next step'
-                    );
-
+        if (isLoginMode) {
+            result = await supabaseClient.auth.signInWithPassword({ email, password });
+        } else {
+            result = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: window.location.origin
                 }
-            );
-
+            });
         }
-    );
 
+        if (result.error) throw result.error;
 
-// ============================================================
-// AFFILIATE BUTTON
-// ============================================================
-
-document
-    .querySelectorAll(
-        '.affiliate-join-btn'
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                'click',
-
-                () => {
-
-                    if (!currentUser) {
-
-                        showToast(
-                            'Login required for affiliate access'
-                        );
-
-
-                        setAuthMode(
-                            true
-                        );
-
-
-                        authModal?.show();
-
-
-                        return;
-
-                    }
-
-
-                    showToast(
-                        '🚀 Affiliate access coming soon'
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-// ============================================================
-// COMMUNITY BUTTON
-// ============================================================
-
-document
-    .querySelector(
-        '.join-community-demo'
-    )
-    ?.addEventListener(
-        'click',
-
-        () => {
-
-            if (!currentUser) {
-
-                showToast(
-                    'Login before joining the community'
-                );
-
-
-                setAuthMode(
-                    true
-                );
-
-
-                authModal?.show();
-
-
-                return;
-
+        if (!isLoginMode && result.data.user && !result.data.session) {
+            if (authError) {
+                authError.innerText = 'Signup successful. Confirm your email, then log in.';
             }
-
-
-            showToast(
-                '🌐 Community access coming soon'
-            );
-
+            setAuthMode(true);
+            if (authPassword) authPassword.value = '';
+            return;
         }
+
+        const user = result.data.user || result.data.session?.user || null;
+
+        if (user) {
+            authModal?.hide();
+            authForm.reset();
+            await refreshAccountState(user);
+            showToast(`Welcome ${user.email?.split('@')[0] || 'member'} 🚀`);
+        }
+    } catch (err) {
+        console.error(err);
+        if (authError) authError.innerText = err?.message || 'Authentication failed.';
+    } finally {
+        if (authSubmitBtn) {
+            authSubmitBtn.disabled = false;
+            authSubmitBtn.innerText = isLoginMode ? 'Login' : 'Sign Up';
+        }
+    }
+});
+
+// ─── Logout ───
+document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+        console.error(error);
+        showToast('Unable to log out. Please try again.');
+        return;
+    }
+
+    await refreshAccountState(null);
+    showToast('Logged out');
+});
+
+// ============================================================
+// LIPILA PAYMENT UI
+// ============================================================
+
+function setPaymentStatus(message, type = 'secondary') {
+    if (!paymentStatus) return;
+
+    paymentStatus.classList.remove(
+        'text-secondary',
+        'text-info',
+        'text-success',
+        'text-danger',
+        'text-warning'
     );
 
+    paymentStatus.classList.add(`text-${type}`);
+    paymentStatus.innerText = message || '';
+}
 
-// ============================================================
-// INITIALIZE APP
-// ============================================================
+async function getFunctionErrorMessage(error, fallback = 'Something went wrong.') {
+    if (!error) return fallback;
 
-async function initializeApplication() {
+    const response = error.context || error.response;
 
-    // Load price / plan
-    await loadPlan();
+    if (response instanceof Response) {
+        try {
+            const data = await response.clone().json();
+            return data?.error || data?.message || fallback;
+        } catch {
+            try {
+                const text = await response.clone().text();
+                if (text) return text;
+            } catch {
+                // Ignore response parsing errors.
+            }
+        }
+    }
 
+    return error.message || fallback;
+}
 
-    // Check existing login session
-    const {
-        data: {
-            session
-        },
-        error
-    } =
-        await supabaseClient
-            .auth
-            .getSession();
+function stopPaymentPolling() {
+    if (paymentPollTimer) {
+        clearTimeout(paymentPollTimer);
+        paymentPollTimer = null;
+    }
 
+    paymentPollAttempts = 0;
+}
+
+async function getExistingPendingPayment() {
+    if (!currentUser) return null;
+
+    const { data, error } = await supabaseClient
+        .from('payments')
+        .select(`
+            id,
+            merchant_reference,
+            status,
+            amount,
+            currency,
+            created_at
+        `)
+        .eq('user_id', currentUser.id)
+        .in('status', ['pending', 'processing'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     if (error) {
-
-        console.error(
-            'Session error:',
-            error
-        );
-
+        console.error('Pending payment lookup error:', error);
+        return null;
     }
 
-
-    await refreshAccountState(
-        session?.user || null
-    );
-
+    return data || null;
 }
 
 
 // ============================================================
-// WATCH AUTH CHANGES
+// PREMIUM DISCORD ACCESS
 // ============================================================
 
-supabaseClient
-    .auth
-    .onAuthStateChange(
-        (
-            event,
-            session
-        ) => {
+async function openPremiumDiscord() {
+    if (!currentUser) {
+        showToast('🔐 Please login to access Pro Elite Discord');
+        return false;
+    }
 
-            console.log(
-                'Auth event:',
-                event
-            );
-
-
-            // Avoid running long async work directly
-            // inside Supabase auth callback.
-
-            setTimeout(
-                () => {
-
-                    refreshAccountState(
-                        session?.user || null
-                    )
-                        .catch(
-                            console.error
-                        );
-
-                },
-                0
-            );
-
-        }
-    );
-
-
-// Start app
-initializeApplication()
-    .catch(
-        console.error
-    );
-
-
-// ============================================================
-// SMOOTH SCROLL
-// ============================================================
-
-document
-    .querySelectorAll(
-        'a[href^="#"]'
-    )
-    .forEach(
-        anchor => {
-
-            anchor.addEventListener(
-                'click',
-
-                function (
-                    event
-                ) {
-
-                    const id =
-                        this.getAttribute(
-                            'href'
-                        );
-
-
-                    if (
-                        !id ||
-                        id === '#'
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    const target =
-                        document.querySelector(
-                            id
-                        );
-
-
-                    if (target) {
-
-                        event.preventDefault();
-
-
-                        target.scrollIntoView(
-                            {
-                                behavior:
-                                    'smooth',
-
-                                block:
-                                    'start'
-                            }
-                        );
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-// ============================================================
-// NAVBAR SCROLL EFFECT
-// ============================================================
-
-window.addEventListener(
-    'scroll',
-
-    () => {
-
-        const navbar =
-            document.getElementById(
-                'mainNavbar'
-            );
-
-
-        navbar?.classList.toggle(
-            'scrolled',
-            window.scrollY > 20
+    try {
+        const { data, error } = await supabaseClient.functions.invoke(
+            'get-discord-invite',
+            {
+                body: {}
+            }
         );
 
+        if (error) {
+            const message = await getFunctionErrorMessage(
+                error,
+                'Discord access could not be opened.'
+            );
+
+            console.error('Discord access error:', error);
+            showToast(message);
+            return false;
+        }
+
+        if (!data?.inviteUrl) {
+            showToast('Discord invite is unavailable.');
+            return false;
+        }
+
+        window.location.href = data.inviteUrl;
+        return true;
+    } catch (error) {
+        console.error('Unexpected Discord access error:', error);
+        showToast('Discord access could not be opened.');
+        return false;
     }
-);
+}
 
+async function checkLipilaPayment(reference, { silent = false } = {}) {
+    if (!currentUser) return true;
 
-// ============================================================
-// MARKET TICKER
-// BINANCE REAL-TIME DATA
-// ============================================================
-
-const tickerSymbols = [
-
-    {
-        display:
-            'BTC/USD',
-
-        symbol:
-            'BTCUSDT',
-
-        price: 0,
-
-        change:
-            '0.00%'
-    },
-
-    {
-        display:
-            'ETH/USD',
-
-        symbol:
-            'ETHUSDT',
-
-        price: 0,
-
-        change:
-            '0.00%'
-    },
-
-    {
-        display:
-            'SOL/USD',
-
-        symbol:
-            'SOLUSDT',
-
-        price: 0,
-
-        change:
-            '0.00%'
-    },
-
-    {
-        display:
-            'DOGE/USD',
-
-        symbol:
-            'DOGEUSDT',
-
-        price: 0,
-
-        change:
-            '0.00%'
-    },
-
-
-    // Static display values for non-Binance markets
-
-    {
-        display:
-            'ES_F',
-
-        price: 5125,
-
-        change:
-            '-0.3%'
-    },
-
-    {
-        display:
-            'XAU/USD',
-
-        price: 2390,
-
-        change:
-            '+0.7%'
-    },
-
-    {
-        display:
-            'EUR/USD',
-
-        price: 1.0892,
-
-        change:
-            '+0.15%'
-    },
-
-    {
-        display:
-            'SPY',
-
-        price: 523.4,
-
-        change:
-            '-0.2%'
+    if (!reference) {
+        if (!silent) {
+            setPaymentStatus('No payment reference is available.', 'danger');
+        }
+        return true;
     }
 
-];
+    if (!silent && paymentCheckBtn) {
+        paymentCheckBtn.disabled = true;
+        paymentCheckBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Checking...
+        `;
+    }
 
+    try {
+        const { data, error } = await supabaseClient.functions.invoke(
+            'check-lipila-payment',
+            {
+                body: { reference }
+            }
+        );
 
-// ============================================================
-// TICKER SYMBOL MAP
-// ============================================================
+        if (error) {
+            const message = await getFunctionErrorMessage(
+                error,
+                'Unable to check payment status.'
+            );
 
-const symbolMap =
-    {};
+            console.error('Payment status error:', error);
 
+            if (!silent) {
+                setPaymentStatus(message, 'danger');
+            }
 
-tickerSymbols.forEach(
-    (
-        ticker,
-        index
-    ) => {
+            return false;
+        }
+
+        console.log('Lipila payment status:', data);
+
+        const paymentState = String(data?.paymentStatus || '')
+            .trim()
+            .toLowerCase();
+
+        const gatewayState = String(data?.gatewayStatus || '')
+            .trim()
+            .toLowerCase();
+
+        if (paymentState === 'completed' || gatewayState === 'successful') {
+            stopPaymentPolling();
+            activePaymentReference = null;
+
+            setPaymentStatus(
+                'Payment successful. Pro Elite is now active.',
+                'success'
+            );
+
+            paymentCheckBtn?.classList.add('d-none');
+
+            await refreshAccountState(currentUser);
+
+            showToast('✅ Payment successful — opening Pro Elite Discord');
+
+            setTimeout(async () => {
+                paymentModal?.hide();
+                await openPremiumDiscord();
+            }, 1500);
+
+            return true;
+        }
+
+        if (paymentState === 'failed' || gatewayState === 'failed') {
+            stopPaymentPolling();
+            activePaymentReference = null;
+
+            setPaymentStatus(
+                data?.message || 'The payment failed. You can try again.',
+                'danger'
+            );
+
+            if (paymentSubmitBtn) {
+                paymentSubmitBtn.disabled = false;
+                paymentSubmitBtn.innerHTML = `
+                    <i class="fas fa-rotate me-2"></i>
+                    Try Again
+                `;
+            }
+
+            paymentCheckBtn?.classList.add('d-none');
+            return true;
+        }
 
         if (
-            ticker.symbol
+            paymentState === 'cancelled' ||
+            gatewayState === 'cancelled' ||
+            gatewayState === 'canceled'
         ) {
+            stopPaymentPolling();
+            activePaymentReference = null;
 
-            symbolMap[
-                ticker.symbol
-            ] =
-                index;
+            setPaymentStatus(
+                'The payment was cancelled. You can start a new payment.',
+                'warning'
+            );
 
+            if (paymentSubmitBtn) {
+                paymentSubmitBtn.disabled = false;
+                paymentSubmitBtn.innerHTML = `
+                    <i class="fas fa-mobile-screen-button me-2"></i>
+                    Try Again
+                `;
+            }
+
+            paymentCheckBtn?.classList.add('d-none');
+            return true;
         }
 
-    }
-);
-
-
-// ============================================================
-// TICKER DOM
-// ============================================================
-
-const tickerContainer =
-    document.getElementById(
-        'marketTicker'
-    );
-
-const liveIndicator =
-    document.getElementById(
-        'liveIndicator'
-    );
-
-const liveStatus =
-    document.getElementById(
-        'liveStatus'
-    );
-
-
-// ============================================================
-// BUILD TICKER HTML
-// ============================================================
-
-function buildTicker() {
-
-    if (!tickerContainer) {
-
-        return;
-
-    }
-
-
-    let html =
-        '';
-
-
-    // Repeat items so ticker animation appears continuous
-    for (
-        let repeat = 0;
-        repeat < 3;
-        repeat++
-    ) {
-
-        tickerSymbols.forEach(
-            ticker => {
-
-                const change =
-                    String(
-                        ticker.change
-                    );
-
-
-                const up =
-                    change.startsWith('+')
-
-                    ||
-
-                    (
-                        change !== '0.00%'
-
-                        &&
-
-                        !change.startsWith('-')
-                    );
-
-
-                let priceText =
-                    ticker.price;
-
-
-                if (
-                    typeof ticker.price ===
-                    'number'
-                ) {
-
-                    priceText =
-                        ticker.price
-                            .toFixed(
-                                ticker.price < 1
-                                    ? 6
-                                    : 2
-                            );
-
-                }
-
-
-                html +=
-                    `
-                    <div class="ticker-item">
-
-                        <span class="fw-bold">
-
-                            ${escapeHTML(ticker.display)}
-
-                        </span>
-
-
-                        <span
-                            class="
-                                ${
-                                    up
-
-                                        ? 'price-up'
-
-                                        : 'price-down'
-                                }
-                            "
-                        >
-
-                            ${escapeHTML(priceText)}
-
-                        </span>
-
-
-                        <small>
-
-                            ${escapeHTML(change)}
-
-                        </small>
-
-                    </div>
-                    `;
-
-            }
+        setPaymentStatus(
+            data?.message ||
+            'Payment is still pending. Please approve the request on your phone.',
+            'info'
         );
 
+        paymentCheckBtn?.classList.remove('d-none');
+        return false;
+    } catch (error) {
+        console.error('Unexpected payment check error:', error);
+
+        if (!silent) {
+            setPaymentStatus(
+                'Unable to check payment status right now.',
+                'danger'
+            );
+        }
+
+        return false;
+    } finally {
+        if (!silent && paymentCheckBtn) {
+            paymentCheckBtn.disabled = false;
+            paymentCheckBtn.innerHTML = `
+                <i class="fas fa-rotate me-2"></i>
+                Check Payment Status
+            `;
+        }
     }
-
-
-    tickerContainer.innerHTML =
-        html;
-
 }
 
+function startPaymentPolling(reference) {
+    stopPaymentPolling();
 
-// ============================================================
-// BINANCE REST FALLBACK
-// ============================================================
+    activePaymentReference = reference;
+    paymentPollAttempts = 0;
 
-async function fetchBinanceREST() {
+    const poll = async () => {
+        if (activePaymentReference !== reference) return;
 
-    const symbols =
-        Object.keys(
-            symbolMap
-        );
+        paymentPollAttempts += 1;
 
+        const finished = await checkLipilaPayment(reference, { silent: true });
+        if (finished) return;
 
-    if (
-        symbols.length === 0
-    ) {
+        // 24 checks x 5 seconds ≈ 2 minutes.
+        if (paymentPollAttempts >= 24) {
+            stopPaymentPolling();
 
+            setPaymentStatus(
+                'Payment is still pending. Use "Check Payment Status" after approving the request.',
+                'info'
+            );
+
+            paymentCheckBtn?.classList.remove('d-none');
+            return;
+        }
+
+        paymentPollTimer = setTimeout(poll, 5000);
+    };
+
+    paymentPollTimer = setTimeout(poll, 5000);
+}
+
+async function openPaymentFlow() {
+    if (!currentUser) {
+        showToast('🔐 Please login to subscribe');
+        setAuthMode(true);
+        authModal?.show();
         return;
-
     }
 
+    if (currentProfile?.role === 'admin') {
+        showToast('🛡️ Admin premium access is active');
+        return;
+    }
+
+    if (hasPremiumAccess) {
+        const expiry = formatDate(currentSubscription?.current_period_end);
+        showToast(
+            expiry
+                ? `✅ Pro Elite active until ${expiry}`
+                : '✅ Pro Elite is active'
+        );
+        return;
+    }
+
+    stopPaymentPolling();
+    activePaymentReference = null;
+
+    setPaymentStatus('', 'secondary');
+
+    if (paymentSubmitBtn) {
+        paymentSubmitBtn.disabled = false;
+        paymentSubmitBtn.innerHTML = `
+            <i class="fas fa-lock me-2"></i>
+            Continue to Payment
+        `;
+    }
+
+    paymentCheckBtn?.classList.add('d-none');
+
+    if (paymentPhone && currentProfile?.phone_e164) {
+        const storedPhone = String(currentProfile.phone_e164);
+        paymentPhone.value = storedPhone.startsWith('+')
+            ? storedPhone
+            : `+${storedPhone}`;
+    }
+
+    if (paymentPlanSummary && currentPlan) {
+        const amount = Number(currentPlan.price).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        });
+
+        paymentPlanSummary.innerText =
+            `${currentPlan.name} · K${amount} ${currentPlan.currency} / month`;
+    }
+
+    paymentModal?.show();
+
+    setPaymentStatus(
+        'Checking for an existing payment...',
+        'secondary'
+    );
+
+    const existingPayment = await getExistingPendingPayment();
+
+    if (existingPayment?.merchant_reference) {
+        activePaymentReference = existingPayment.merchant_reference;
+
+        if (paymentSubmitBtn) {
+            paymentSubmitBtn.disabled = true;
+            paymentSubmitBtn.innerHTML = `
+                <i class="fas fa-hourglass-half me-2"></i>
+                Payment Pending
+            `;
+        }
+
+        paymentCheckBtn?.classList.remove('d-none');
+
+        setPaymentStatus(
+            'You already have a payment in progress. Checking it now...',
+            'info'
+        );
+
+        const finished = await checkLipilaPayment(activePaymentReference);
+
+        if (!finished && activePaymentReference) {
+            startPaymentPolling(activePaymentReference);
+        }
+
+        return;
+    }
+
+    setPaymentStatus(
+        'Enter your mobile money number to continue.',
+        'secondary'
+    );
+}
+
+paymentForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+        paymentModal?.hide();
+        setAuthMode(true);
+        authModal?.show();
+        return;
+    }
+
+    if (activePaymentReference) {
+        setPaymentStatus(
+            'A payment is already in progress. Please check its status.',
+            'warning'
+        );
+        return;
+    }
+
+    const phone = paymentPhone?.value.trim();
+
+    if (!phone) {
+        setPaymentStatus('Enter your mobile money number.', 'danger');
+        paymentPhone?.focus();
+        return;
+    }
+
+    if (paymentSubmitBtn) {
+        paymentSubmitBtn.disabled = true;
+        paymentSubmitBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Sending payment request...
+        `;
+    }
+
+    setPaymentStatus('Connecting securely to Lipila...', 'info');
 
     try {
-
-        const url =
-
-            'https://api.binance.com/api/v3/ticker/24hr?symbols='
-
-            +
-
-            encodeURIComponent(
-                JSON.stringify(symbols)
-            );
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Binance REST error ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        data.forEach(
-            item => {
-
-                const index =
-                    symbolMap[
-                        item.symbol
-                    ];
-
-
-                if (
-                    index ===
-                    undefined
-                ) {
-
-                    return;
-
-                }
-
-
-                const price =
-                    parseFloat(
-                        item.lastPrice
-                    );
-
-
-                const change =
-                    parseFloat(
-                        item.priceChangePercent
-                    );
-
-
-                tickerSymbols[
-                    index
-                ].price =
-                    price;
-
-
-                tickerSymbols[
-                    index
-                ].change =
-
-                    (
-                        change > 0
-                            ? '+'
-                            : ''
-                    )
-
-                    +
-
-                    change.toFixed(2)
-
-                    +
-
-                    '%';
-
+        const { data, error } = await supabaseClient.functions.invoke(
+            'create-lipila-payment',
+            {
+                body: { phone }
             }
         );
 
-
-        buildTicker();
-
-
-        if (liveIndicator) {
-
-            liveIndicator.className =
-                'live-indicator on';
-
+        if (error) {
+            const message = await getFunctionErrorMessage(
+                error,
+                'Unable to start the payment.'
+            );
+            throw new Error(message);
         }
 
+        console.log('Lipila payment created:', data);
 
-        if (liveStatus) {
-
-            liveStatus.textContent =
-                'Live';
-
+        if (!data?.reference) {
+            throw new Error('Lipila did not return a payment reference.');
         }
 
-    }
+        activePaymentReference = data.reference;
 
-    catch (error) {
-
-        console.warn(
-            'Binance REST fallback failed:',
-            error
+        setPaymentStatus(
+            'Payment request sent. Check your phone and approve the mobile money prompt.',
+            'info'
         );
 
-
-        if (liveIndicator) {
-
-            liveIndicator.className =
-                'live-indicator';
-
+        if (paymentSubmitBtn) {
+            paymentSubmitBtn.disabled = true;
+            paymentSubmitBtn.innerHTML = `
+                <i class="fas fa-mobile-screen-button me-2"></i>
+                Waiting for Payment
+            `;
         }
 
+        paymentCheckBtn?.classList.remove('d-none');
 
-        if (liveStatus) {
+        showToast('📱 Payment request sent — check your phone');
+        startPaymentPolling(activePaymentReference);
+    } catch (error) {
+        console.error('Payment initiation error:', error);
 
-            liveStatus.textContent =
-                'Offline';
+        setPaymentStatus(
+            error?.message || 'Unable to start payment.',
+            'danger'
+        );
 
+        if (paymentSubmitBtn) {
+            paymentSubmitBtn.disabled = false;
+            paymentSubmitBtn.innerHTML = `
+                <i class="fas fa-rotate me-2"></i>
+                Try Again
+            `;
         }
+    }
+});
 
+paymentCheckBtn?.addEventListener('click', async () => {
+    if (!activePaymentReference) {
+        setPaymentStatus('No active payment was found.', 'warning');
+        return;
     }
 
+    const finished = await checkLipilaPayment(activePaymentReference);
+
+    if (!finished && activePaymentReference) {
+        startPaymentPolling(activePaymentReference);
+    }
+});
+
+paymentModalEl?.addEventListener('hidden.bs.modal', () => {
+    // Closing the modal only stops browser polling. It does not cancel Lipila.
+    stopPaymentPolling();
+});
+
+// ─── Pro Elite subscribe button ───
+document
+    .querySelectorAll('.subscribe-demo[data-plan="elite"]')
+    .forEach((btn) => {
+        btn.addEventListener('click', async (event) => {
+            event.preventDefault();
+            await openPaymentFlow();
+        });
+    });
+
+// ─── Affiliate / community handlers ───
+document.querySelectorAll('.affiliate-join-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        if (!currentUser) {
+            showToast('Login required for affiliate access');
+            setAuthMode(true);
+            authModal?.show();
+            return;
+        }
+        showToast('🚀 Affiliate access coming soon');
+    });
+});
+
+document.querySelector('.join-community-demo')?.addEventListener('click', () => {
+    if (!currentUser) {
+        showToast('Login before joining the community');
+        setAuthMode(true);
+        authModal?.show();
+        return;
+    }
+    showToast('🌐 Community access coming soon');
+});
+
+// ─── Initial application load ───
+async function initializeApplication() {
+    await loadPlan();
+
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error) console.error('Session error:', error);
+
+    await refreshAccountState(session?.user || null);
 }
 
+// Keep UI synced with login/logout/token state.
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+    // Run after the auth callback returns to avoid doing long async work inside it.
+    setTimeout(() => {
+        refreshAccountState(session?.user || null).catch(console.error);
+    }, 0);
+});
 
-// ============================================================
-// BINANCE WEBSOCKET
-// ============================================================
+initializeApplication().catch(console.error);
 
-let ws =
-    null;
+// ─── Smooth scroll ───
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const id = this.getAttribute('href');
+        if (id === '#') return;
+        const target = document.querySelector(id);
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
 
-let reconnectAttempts =
-    0;
+// ─── Navbar scroll effect ───
+window.addEventListener('scroll', () => {
+    document.getElementById('mainNavbar')?.classList.toggle('scrolled', window.scrollY > 20);
+});
 
-const maxReconnect =
-    5;
+// ─── REAL-TIME TICKER with WebSocket + REST fallback ───
+// Define symbols
+const tickerSymbols = [
+    { display: 'BTC/USD', symbol: 'BTCUSDT', price: 0, change: '0.00%' },
+    { display: 'ETH/USD', symbol: 'ETHUSDT', price: 0, change: '0.00%' },
+    { display: 'SOL/USD', symbol: 'SOLUSDT', price: 0, change: '0.00%' },
+    { display: 'DOGE/USD', symbol: 'DOGEUSDT', price: 0, change: '0.00%' },
+    // Static fallback for non-crypto
+    { display: 'ES_F', price: 5125, change: '-0.3%' },
+    { display: 'XAU/USD', price: 2390, change: '+0.7%' },
+    { display: 'EUR/USD', price: 1.0892, change: '+0.15%' },
+    { display: 'SPY', price: 523.4, change: '-0.2%' }
+];
 
-let restInterval =
-    null;
+// Map for quick updates
+const symbolMap = {};
+tickerSymbols.forEach((s, idx) => {
+    if (s.symbol) symbolMap[s.symbol] = idx;
+});
 
+// DOM elements
+const tickerContainer = document.getElementById('marketTicker');
+const liveIndicator = document.getElementById('liveIndicator');
+const liveStatus = document.getElementById('liveStatus');
 
-// ============================================================
-// CONNECT WEBSOCKET
-// ============================================================
+// Build ticker
+function buildTicker() {
+    let html = '';
+    for (let rep = 0; rep < 3; rep++) {
+        tickerSymbols.forEach(s => {
+            const up = s.change.startsWith('+') || (s.change !== '0.00%' && !s.change.startsWith('-'));
+            let priceStr = '';
+            if (typeof s.price === 'number') {
+                priceStr = s.price.toFixed(s.price < 1 ? 6 : 2);
+            } else {
+                priceStr = s.price;
+            }
+            html += `<div class="ticker-item">
+                            <span class="fw-bold">${s.display}</span>
+                            <span class="${up ? 'price-up' : 'price-down'}">${priceStr}</span>
+                            <small>${s.change}</small>
+                        </div>`;
+        });
+    }
+    if (tickerContainer) tickerContainer.innerHTML = html;
+}
+
+// Fetch from Binance REST API (fallback)
+async function fetchBinanceREST() {
+    const symbols = Object.keys(symbolMap);
+    if (symbols.length === 0) return;
+    try {
+        // Use 24hr ticker endpoint for all symbols at once
+        const url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=' + JSON.stringify(symbols);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('REST API error');
+        const data = await response.json();
+        data.forEach(item => {
+            const idx = symbolMap[item.symbol];
+            if (idx !== undefined) {
+                const price = parseFloat(item.lastPrice);
+                const change = parseFloat(item.priceChangePercent);
+                tickerSymbols[idx].price = price;
+                tickerSymbols[idx].change = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+            }
+        });
+        buildTicker();
+        if (liveIndicator) liveIndicator.className = 'live-indicator on';
+        if (liveStatus) liveStatus.textContent = 'Live (REST)';
+    } catch (e) {
+        console.warn('REST fallback failed:', e);
+        if (liveIndicator) liveIndicator.className = 'live-indicator';
+        if (liveStatus) liveStatus.textContent = 'Offline';
+    }
+}
+
+// WebSocket
+let ws = null;
+let reconnectAttempts = 0;
+const maxReconnect = 5;
+let restInterval = null;
+let wsReady = false;
 
 function connectWebSocket() {
+    const streams = Object.keys(symbolMap).map(s => s.toLowerCase() + '@ticker');
+    const wsUrl = `wss://stream.binance.com:9443/stream?streams=${streams.join('/')}`;
+    ws = new WebSocket(wsUrl);
 
-    const streams =
-        Object.keys(
-            symbolMap
-        )
-            .map(
-                symbol =>
-                    symbol
-                        .toLowerCase()
+    ws.onopen = () => {
+        console.log('Binance WebSocket connected');
+        reconnectAttempts = 0;
+        wsReady = true;
+        if (liveIndicator) liveIndicator.className = 'live-indicator on';
+        if (liveStatus) liveStatus.textContent = 'Live (WS)';
+        // If we had REST fallback, clear it
+        if (restInterval) {
+            clearInterval(restInterval);
+            restInterval = null;
+        }
+    };
 
-                    +
-
-                    '@ticker'
-            );
-
-
-    if (
-        streams.length === 0
-    ) {
-
-        return;
-
-    }
-
-
-    const wsUrl =
-        `
-        wss://stream.binance.com:9443/stream?streams=${streams.join('/')}
-        `
-            .trim();
-
-
-    try {
-
-        ws =
-            new WebSocket(
-                wsUrl
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            'WebSocket creation error:',
-            error
-        );
-
-
-        startRESTFallback();
-
-
-        return;
-
-    }
-
-
-    // Connected
-    ws.onopen =
-        () => {
-
-            console.log(
-                'Binance WebSocket connected'
-            );
-
-
-            reconnectAttempts =
-                0;
-
-
-            if (liveIndicator) {
-
-                liveIndicator.className =
-                    'live-indicator on';
-
-            }
-
-
-            if (liveStatus) {
-
-                liveStatus.textContent =
-                    'Live';
-
-            }
-
-
-            if (restInterval) {
-
-                clearInterval(
-                    restInterval
-                );
-
-
-                restInterval =
-                    null;
-
-            }
-
-        };
-
-
-    // Message received
-    ws.onmessage =
-        event => {
-
-            try {
-
-                const message =
-                    JSON.parse(
-                        event.data
-                    );
-
-
-                if (
-                    !message.data ||
-                    !message.stream
-                ) {
-
-                    return;
-
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            if (data.data && data.stream) {
+                const streamName = data.stream;
+                const symbol = streamName.split('@')[0].toUpperCase();
+                const idx = symbolMap[symbol];
+                if (idx !== undefined) {
+                    const ticker = data.data;
+                    const price = parseFloat(ticker.c);
+                    const change = parseFloat(ticker.P);
+                    tickerSymbols[idx].price = price;
+                    tickerSymbols[idx].change = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+                    buildTicker();
                 }
-
-
-                const symbol =
-                    message
-                        .stream
-                        .split('@')[0]
-                        .toUpperCase();
-
-
-                const index =
-                    symbolMap[
-                        symbol
-                    ];
-
-
-                if (
-                    index ===
-                    undefined
-                ) {
-
-                    return;
-
-                }
-
-
-                const ticker =
-                    message.data;
-
-
-                const price =
-                    parseFloat(
-                        ticker.c
-                    );
-
-
-                const change =
-                    parseFloat(
-                        ticker.P
-                    );
-
-
-                tickerSymbols[
-                    index
-                ].price =
-                    price;
-
-
-                tickerSymbols[
-                    index
-                ].change =
-
-                    (
-                        change > 0
-                            ? '+'
-                            : ''
-                    )
-
-                    +
-
-                    change.toFixed(2)
-
-                    +
-
-                    '%';
-
-
-                buildTicker();
-
             }
+        } catch (e) {
+            console.warn('WS parse error', e);
+        }
+    };
 
-            catch (error) {
+    ws.onerror = (err) => {
+        console.warn('WebSocket error', err);
+        wsReady = false;
+        if (liveIndicator) liveIndicator.className = 'live-indicator';
+        if (liveStatus) liveStatus.textContent = 'Connecting...';
+    };
 
-                console.warn(
-                    'Ticker WebSocket parsing error:',
-                    error
-                );
-
-            }
-
-        };
-
-
-    // Error
-    ws.onerror =
-        error => {
-
-            console.warn(
-                'Binance WebSocket error:',
-                error
-            );
-
-
-            if (liveIndicator) {
-
-                liveIndicator.className =
-                    'live-indicator';
-
-            }
-
-
-            if (liveStatus) {
-
-                liveStatus.textContent =
-                    'Connecting...';
-
-            }
-
-        };
-
-
-    // Disconnected
-    ws.onclose =
-        () => {
-
-            console.log(
-                'Binance WebSocket disconnected'
-            );
-
-
-            if (liveIndicator) {
-
-                liveIndicator.className =
-                    'live-indicator';
-
-            }
-
-
-            if (liveStatus) {
-
-                liveStatus.textContent =
-                    'Reconnecting...';
-
-            }
-
-
-            startRESTFallback();
-
-
-            if (
-                reconnectAttempts <
-                maxReconnect
-            ) {
-
-                reconnectAttempts++;
-
-
-                setTimeout(
-                    connectWebSocket,
-                    3000
-                );
-
-            }
-
-            else {
-
-                if (liveStatus) {
-
-                    liveStatus.textContent =
-                        'Live';
-
-                }
-
-            }
-
-        };
-
+    ws.onclose = () => {
+        console.log('WebSocket closed');
+        wsReady = false;
+        if (liveIndicator) liveIndicator.className = 'live-indicator';
+        if (liveStatus) liveStatus.textContent = 'Reconnecting...';
+        // Start REST fallback if not already
+        if (!restInterval) {
+            restInterval = setInterval(fetchBinanceREST, 10000);
+            fetchBinanceREST(); // immediate
+        }
+        if (reconnectAttempts < maxReconnect) {
+            reconnectAttempts++;
+            setTimeout(connectWebSocket, 3000);
+        } else {
+            if (liveStatus) liveStatus.textContent = 'REST fallback';
+        }
+    };
 }
 
-
-// ============================================================
-// START REST FALLBACK
-// ============================================================
-
-function startRESTFallback() {
-
-    if (restInterval) {
-
-        return;
-
-    }
-
-
-    fetchBinanceREST();
-
-
-    restInterval =
-        setInterval(
-            fetchBinanceREST,
-            15000
-        );
-
-}
-
-
-// ============================================================
-// INITIALIZE TICKER
-// ============================================================
-
+// Initial data fetch via REST, then start WebSocket
 async function initTicker() {
-
-    buildTicker();
-
-
-    // Get initial crypto prices
+    // First try REST to get initial data
     await fetchBinanceREST();
-
-
-    // Then upgrade to WebSocket
+    // Then attempt WebSocket
     connectWebSocket();
-
-
-    // REST safety fallback
+    // Also set a REST interval as safety (will be cleared if WS connects)
     if (!restInterval) {
-
-        restInterval =
-            setInterval(
-                fetchBinanceREST,
-                15000
-            );
-
+        restInterval = setInterval(fetchBinanceREST, 15000);
     }
-
 }
 
+initTicker();
 
-// Start ticker
-initTicker()
-    .catch(
-        console.error
-    );
+// ─── Countdown Timer ───
+function updateCountdown() {
+    const end = new Date('2026-09-30T23:59:59').getTime();
+    const now = Date.now();
+    let diff = end - now;
+    if (diff < 0) diff = 0;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    const countdownDays = document.getElementById('countdownDays');
+    const countdownHours = document.getElementById('countdownHours');
+    const countdownMinutes = document.getElementById('countdownMinutes');
+    const countdownSeconds = document.getElementById('countdownSeconds');
+
+    if (countdownDays) countdownDays.textContent = String(days).padStart(2, '0');
+    if (countdownHours) countdownHours.textContent = String(hours).padStart(2, '0');
+    if (countdownMinutes) countdownMinutes.textContent = String(mins).padStart(2, '0');
+    if (countdownSeconds) countdownSeconds.textContent = String(secs).padStart(2, '0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
